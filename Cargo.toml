@@ -19,9 +19,11 @@ test = false
 
 [dependencies]
 form_urlencoded = "1.0.1"
+indexmap = "1.8.1"
 itoa = "1.0.1"
 ryu = "1.0.9"
 serde = "1.0.136"
 
 [dev-dependencies]
+matches = "0.1.9"
 serde = { version = "1.0.136", features = ["derive"] }
