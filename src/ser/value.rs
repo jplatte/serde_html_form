@@ -25,11 +25,7 @@ where
         urlencoder: &'target mut UrlEncodedSerializer<'input, Target>,
         key: &'key str,
     ) -> Self {
-        ValueSink {
-            urlencoder,
-            key,
-            nested: false,
-        }
+        ValueSink { urlencoder, key, nested: false }
     }
 }
 
