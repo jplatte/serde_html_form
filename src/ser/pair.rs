@@ -254,17 +254,3 @@ enum PairState {
     WaitingForValue { key: Cow<'static, str> },
     Done,
 }
-
-impl Error {
-    fn done() -> Self {
-        Error::Custom("this pair has already been serialized".into())
-    }
-
-    fn not_done() -> Self {
-        Error::Custom("this pair has not yet been serialized".into())
-    }
-
-    fn unsupported_pair() -> Self {
-        Error::Custom("unsupported pair".into())
-    }
-}

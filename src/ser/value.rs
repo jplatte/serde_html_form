@@ -5,7 +5,7 @@ use form_urlencoded::{
 };
 use serde::ser::Serialize;
 
-use crate::ser::{
+use super::{
     part::{PartSerializer, Sink},
     Error,
 };
@@ -62,6 +62,6 @@ where
     }
 
     fn unsupported(self) -> Error {
-        Error::Custom("unsupported value".into())
+        Error::unsupported_value()
     }
 }

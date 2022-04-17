@@ -1,16 +1,19 @@
 //! Serialization support for the `application/x-www-form-urlencoded` format.
 
+mod error;
 mod key;
 mod pair;
 mod part;
 mod value;
 
-use std::{borrow::Cow, error, fmt, str};
+use std::{borrow::Cow, str};
 
 use form_urlencoded::{
     Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget,
 };
 use serde::ser;
+
+pub use self::error::Error;
 
 /// Serializes a value into a `application/x-www-form-urlencoded` `String` buffer.
 ///
@@ -53,53 +56,6 @@ impl<'input, 'output, Target: 'output + UrlEncodedTarget>
         urlencoder: &'output mut UrlEncodedSerializer<'input, Target>,
     ) -> Self {
         Serializer { urlencoder }
-    }
-}
-
-/// Errors returned during serializing to `application/x-www-form-urlencoded`.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Error {
-    Custom(Cow<'static, str>),
-    Utf8(str::Utf8Error),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            Error::Custom(ref msg) => msg.fmt(f),
-            Error::Utf8(ref err) => write!(f, "invalid UTF-8: {}", err),
-        }
-    }
-}
-
-impl error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Custom(ref msg) => msg,
-            Error::Utf8(ref err) => error::Error::description(err),
-        }
-    }
-
-    /// The lower-level cause of this error, in the case of a `Utf8` error.
-    fn cause(&self) -> Option<&dyn error::Error> {
-        match *self {
-            Error::Custom(_) => None,
-            Error::Utf8(ref err) => Some(err),
-        }
-    }
-
-    /// The lower-level source of this error, in the case of a `Utf8` error.
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match *self {
-            Error::Custom(_) => None,
-            Error::Utf8(ref err) => Some(err),
-        }
-    }
-}
-
-impl ser::Error for Error {
-    fn custom<T: fmt::Display>(msg: T) -> Self {
-        Error::Custom(format!("{}", msg).into())
     }
 }
 
@@ -538,17 +494,5 @@ where
 
     fn end(self) -> Result<Self::Ok, Error> {
         self.inner.end()
-    }
-}
-
-impl Error {
-    fn top_level() -> Self {
-        let msg = "top-level serializer supports only maps and structs";
-        Error::Custom(msg.into())
-    }
-
-    fn no_key() -> Self {
-        let msg = "tried to serialize a value before serializing key";
-        Error::Custom(msg.into())
     }
 }

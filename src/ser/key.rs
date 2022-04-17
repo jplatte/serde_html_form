@@ -2,7 +2,7 @@ use std::{borrow::Cow, ops::Deref};
 
 use serde::Serialize;
 
-use crate::ser::{part::Sink, Error};
+use super::{part::Sink, Error};
 
 pub enum Key<'key> {
     Static(&'static str),
@@ -72,6 +72,6 @@ where
     }
 
     fn unsupported(self) -> Error {
-        Error::Custom("unsupported key".into())
+        Error::unsupported_key()
     }
 }

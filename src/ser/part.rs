@@ -2,7 +2,7 @@ use std::str;
 
 use serde::ser;
 
-use crate::ser::Error;
+use super::Error;
 
 pub struct PartSerializer<S> {
     sink: S,
@@ -109,7 +109,7 @@ impl<S: Sink> ser::Serializer for PartSerializer<S> {
     fn serialize_bytes(self, value: &[u8]) -> Result<S::Ok, Error> {
         match str::from_utf8(value) {
             Ok(value) => self.sink.serialize_str(value),
-            Err(err) => Err(Error::Utf8(err)),
+            Err(err) => Err(Error::utf8(err)),
         }
     }
 
