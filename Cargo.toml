@@ -18,10 +18,10 @@ travis-ci = {repository = "nox/serde_urlencoded"}
 test = false
 
 [dependencies]
-form_urlencoded = "1"
-itoa = "1"
-ryu = "1"
-serde = "1.0.69"
+form_urlencoded = "1.0.1"
+itoa = "1.0.1"
+ryu = "1.0.9"
+serde = "1.0.136"
 
 [dev-dependencies]
 serde = { version = "1.0.136", features = ["derive"] }
