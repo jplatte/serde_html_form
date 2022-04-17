@@ -1,12 +1,11 @@
-use crate::ser::key::KeySink;
-use crate::ser::part::PartSerializer;
-use crate::ser::value::ValueSink;
-use crate::ser::Error;
-use form_urlencoded::Serializer as UrlEncodedSerializer;
-use form_urlencoded::Target as UrlEncodedTarget;
+use std::{borrow::Cow, mem};
+
+use form_urlencoded::{
+    Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget,
+};
 use serde::ser;
-use std::borrow::Cow;
-use std::mem;
+
+use crate::ser::{key::KeySink, part::PartSerializer, value::ValueSink, Error};
 
 pub struct PairSerializer<'input, 'target, Target: UrlEncodedTarget> {
     urlencoder: &'target mut UrlEncodedSerializer<'input, Target>,

@@ -1,13 +1,11 @@
 //! Deserialization support for the `application/x-www-form-urlencoded` format.
+use std::{borrow::Cow, io::Read};
 
-use form_urlencoded::parse;
-use form_urlencoded::Parse as UrlEncodedParse;
-use serde::de::value::MapDeserializer;
-use serde::de::Error as de_Error;
-use serde::de::{self, IntoDeserializer};
-use serde::forward_to_deserialize_any;
-use std::borrow::Cow;
-use std::io::Read;
+use form_urlencoded::{parse, Parse as UrlEncodedParse};
+use serde::{
+    de::{self, value::MapDeserializer, Error as de_Error, IntoDeserializer},
+    forward_to_deserialize_any,
+};
 
 #[doc(inline)]
 pub use serde::de::value::Error;

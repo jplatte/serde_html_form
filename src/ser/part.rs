@@ -1,6 +1,8 @@
-use crate::ser::Error;
-use serde::ser;
 use std::str;
+
+use serde::ser;
+
+use crate::ser::Error;
 
 pub struct PartSerializer<S> {
     sink: S,

@@ -1,8 +1,8 @@
-use crate::ser::part::Sink;
-use crate::ser::Error;
+use std::{borrow::Cow, ops::Deref};
+
 use serde::Serialize;
-use std::borrow::Cow;
-use std::ops::Deref;
+
+use crate::ser::{part::Sink, Error};
 
 pub enum Key<'key> {
     Static(&'static str),
