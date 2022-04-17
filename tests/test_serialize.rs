@@ -1,4 +1,4 @@
-use serde_derive::Serialize;
+use serde::Serialize;
 
 #[derive(Serialize)]
 struct NewType<T>(T);
