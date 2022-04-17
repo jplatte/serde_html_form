@@ -486,7 +486,7 @@ where
     ) -> Result<(), Error> {
         {
             let key = self.key.as_ref().ok_or_else(Error::no_key)?;
-            let value_sink = value::ValueSink::new(self.urlencoder, &key);
+            let value_sink = value::ValueSink::new(self.urlencoder, key);
             value.serialize(part::PartSerializer::new(value_sink))?;
         }
         self.key = None;
