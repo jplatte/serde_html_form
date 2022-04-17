@@ -180,3 +180,6 @@ fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part
 }
 
 type EntryIterator<'de> = map::IntoIter<Part<'de>, ValOrVec<Part<'de>>>;
+
+#[cfg(test)]
+mod tests;

@@ -434,3 +434,6 @@ where
         self.inner.end()
     }
 }
+
+#[cfg(test)]
+mod tests;
