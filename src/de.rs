@@ -66,9 +66,9 @@ where
     R: Read,
 {
     let mut buf = vec![];
-    reader.read_to_end(&mut buf).map_err(|e| {
-        de::Error::custom(format_args!("could not read input: {}", e))
-    })?;
+    reader
+        .read_to_end(&mut buf)
+        .map_err(|e| de::Error::custom(format_args!("could not read input: {}", e)))?;
     from_bytes(&buf)
 }
 
@@ -88,9 +88,7 @@ pub struct Deserializer<'de> {
 impl<'de> Deserializer<'de> {
     /// Returns a new `Deserializer`.
     pub fn new(parser: UrlEncodedParse<'de>) -> Self {
-        Deserializer {
-            inner: MapDeserializer::new(PartIterator(parser)),
-        }
+        Deserializer { inner: MapDeserializer::new(PartIterator(parser)) }
     }
 }
 
@@ -271,10 +269,7 @@ impl<'de> de::EnumAccess<'de> for ValueEnumAccess<'de> {
     type Error = Error;
     type Variant = UnitOnlyVariantAccess;
 
-    fn variant_seed<V>(
-        self,
-        seed: V,
-    ) -> Result<(V::Value, Self::Variant), Self::Error>
+    fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), Self::Error>
     where
         V: de::DeserializeSeed<'de>,
     {
@@ -299,11 +294,7 @@ impl<'de> de::VariantAccess<'de> for UnitOnlyVariantAccess {
         Err(Error::custom("expected unit variant"))
     }
 
-    fn tuple_variant<V>(
-        self,
-        _len: usize,
-        _visitor: V,
-    ) -> Result<V::Value, Self::Error>
+    fn tuple_variant<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {

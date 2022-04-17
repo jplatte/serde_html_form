@@ -1,8 +1,6 @@
 use std::str;
 
-use form_urlencoded::{
-    Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget,
-};
+use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
 use serde::ser::Serialize;
 
 use super::{
@@ -30,8 +28,7 @@ where
     }
 }
 
-impl<'input, 'key, 'target, Target> Sink
-    for ValueSink<'input, 'key, 'target, Target>
+impl<'input, 'key, 'target, Target> Sink for ValueSink<'input, 'key, 'target, Target>
 where
     Target: 'target + UrlEncodedTarget,
 {
@@ -54,10 +51,7 @@ where
         Ok(())
     }
 
-    fn serialize_some<T: ?Sized + Serialize>(
-        self,
-        value: &T,
-    ) -> Result<Self::Ok, Error> {
+    fn serialize_some<T: ?Sized + Serialize>(self, value: &T) -> Result<Self::Ok, Error> {
         value.serialize(PartSerializer::new(self))
     }
 

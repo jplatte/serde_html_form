@@ -18,15 +18,11 @@ enum ErrorKind {
 
 impl Error {
     pub(super) fn done() -> Self {
-        Error(ErrorKind::Custom(
-            "this pair has already been serialized".into(),
-        ))
+        Error(ErrorKind::Custom("this pair has already been serialized".into()))
     }
 
     pub(super) fn not_done() -> Self {
-        Error(ErrorKind::Custom(
-            "this pair has not yet been serialized".into(),
-        ))
+        Error(ErrorKind::Custom("this pair has not yet been serialized".into()))
     }
 
     pub(super) fn unsupported_key() -> Self {
@@ -42,15 +38,11 @@ impl Error {
     }
 
     pub(super) fn top_level() -> Self {
-        Error(ErrorKind::Custom(
-            "top-level serializer supports only maps and structs".into(),
-        ))
+        Error(ErrorKind::Custom("top-level serializer supports only maps and structs".into()))
     }
 
     pub(super) fn no_key() -> Self {
-        Error(ErrorKind::Custom(
-            "tried to serialize a value before serializing key".into(),
-        ))
+        Error(ErrorKind::Custom("tried to serialize a value before serializing key".into()))
     }
 
     pub(super) fn utf8(error: Utf8Error) -> Self {
