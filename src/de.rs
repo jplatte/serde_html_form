@@ -1,20 +1,21 @@
 //! Deserialization support for the `application/x-www-form-urlencoded` format.
 
-use std::{borrow::Cow, io::Read};
+use std::io::Read;
 
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
 use indexmap::map::{self, IndexMap};
 use serde::{
-    de::{self, value::MapDeserializer, Error as _, IntoDeserializer},
+    de::{self, value::MapDeserializer},
     forward_to_deserialize_any,
 };
 
 #[doc(inline)]
 pub use serde::de::value::Error;
 
+mod part;
 mod val_or_vec;
 
-use val_or_vec::ValOrVec;
+use self::{part::Part, val_or_vec::ValOrVec};
 
 /// Deserializes a `application/x-www-form-urlencoded` value from a `&[u8]`.
 ///
@@ -179,154 +180,3 @@ fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part
 }
 
 type EntryIterator<'de> = map::IntoIter<Part<'de>, ValOrVec<Part<'de>>>;
-
-#[derive(PartialEq, PartialOrd, Eq, Ord, Hash)]
-struct Part<'de>(Cow<'de, str>);
-
-impl<'de> IntoDeserializer<'de> for Part<'de> {
-    type Deserializer = Self;
-
-    fn into_deserializer(self) -> Self::Deserializer {
-        self
-    }
-}
-
-macro_rules! forward_parsed_value {
-    ($($ty:ident => $method:ident,)*) => {
-        $(
-            fn $method<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-                where V: de::Visitor<'de>
-            {
-                match self.0.parse::<$ty>() {
-                    Ok(val) => val.into_deserializer().$method(visitor),
-                    Err(e) => Err(de::Error::custom(e))
-                }
-            }
-        )*
-    }
-}
-
-impl<'de> de::Deserializer<'de> for Part<'de> {
-    type Error = Error;
-
-    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        match self.0 {
-            Cow::Borrowed(value) => visitor.visit_borrowed_str(value),
-            Cow::Owned(value) => visitor.visit_string(value),
-        }
-    }
-
-    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        visitor.visit_some(self)
-    }
-
-    fn deserialize_enum<V>(
-        self,
-        _name: &'static str,
-        _variants: &'static [&'static str],
-        visitor: V,
-    ) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        visitor.visit_enum(ValueEnumAccess(self.0))
-    }
-
-    fn deserialize_newtype_struct<V>(
-        self,
-        _name: &'static str,
-        visitor: V,
-    ) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        visitor.visit_newtype_struct(self)
-    }
-
-    forward_to_deserialize_any! {
-        char
-        str
-        string
-        unit
-        bytes
-        byte_buf
-        unit_struct
-        tuple_struct
-        struct
-        identifier
-        tuple
-        ignored_any
-        seq
-        map
-    }
-
-    forward_parsed_value! {
-        bool => deserialize_bool,
-        u8 => deserialize_u8,
-        u16 => deserialize_u16,
-        u32 => deserialize_u32,
-        u64 => deserialize_u64,
-        i8 => deserialize_i8,
-        i16 => deserialize_i16,
-        i32 => deserialize_i32,
-        i64 => deserialize_i64,
-        f32 => deserialize_f32,
-        f64 => deserialize_f64,
-    }
-}
-
-struct ValueEnumAccess<'de>(Cow<'de, str>);
-
-impl<'de> de::EnumAccess<'de> for ValueEnumAccess<'de> {
-    type Error = Error;
-    type Variant = UnitOnlyVariantAccess;
-
-    fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), Self::Error>
-    where
-        V: de::DeserializeSeed<'de>,
-    {
-        let variant = seed.deserialize(self.0.into_deserializer())?;
-        Ok((variant, UnitOnlyVariantAccess))
-    }
-}
-
-struct UnitOnlyVariantAccess;
-
-impl<'de> de::VariantAccess<'de> for UnitOnlyVariantAccess {
-    type Error = Error;
-
-    fn unit_variant(self) -> Result<(), Self::Error> {
-        Ok(())
-    }
-
-    fn newtype_variant_seed<T>(self, _seed: T) -> Result<T::Value, Self::Error>
-    where
-        T: de::DeserializeSeed<'de>,
-    {
-        Err(Error::custom("expected unit variant"))
-    }
-
-    fn tuple_variant<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        Err(Error::custom("expected unit variant"))
-    }
-
-    fn struct_variant<V>(
-        self,
-        _fields: &'static [&'static str],
-        _visitor: V,
-    ) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        Err(Error::custom("expected unit variant"))
-    }
-}
