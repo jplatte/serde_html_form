@@ -144,6 +144,53 @@ fn serialize_struct_unit_enum() {
 }
 
 #[test]
+fn serialize_list_of_str() {
+    let params = &[("list", vec!["hello", "world"])];
+
+    assert_eq!(serde_urlencoded::to_string(params), Ok("list=hello&list=world".to_owned()));
+}
+
+#[test]
+fn serialize_multiple_lists() {
+    #[derive(Serialize)]
+    struct Lists {
+        xs: Vec<bool>,
+        ys: Vec<u32>,
+    }
+
+    let params = Lists { xs: vec![true, false], ys: vec![3, 2, 1] };
+
+    assert_eq!(
+        serde_urlencoded::to_string(params),
+        Ok("xs=true&xs=false&ys=3&ys=2&ys=1".to_owned())
+    );
+}
+
+#[test]
+fn serialize_nested_list() {
+    let params = &[("list", vec![vec![0u8]])];
+    assert!(serde_urlencoded::to_string(params).unwrap_err().to_string().contains("unsupported"));
+}
+
+#[test]
+fn serialize_list_of_option() {
+    let params = &[("list", vec![Some(10), Some(100)])];
+    assert_eq!(serde_urlencoded::to_string(params), Ok("list=10&list=100".to_owned()));
+}
+
+#[test]
+fn serialize_list_of_newtype() {
+    let params = &[("list", vec![NewType("test".to_owned())])];
+    assert_eq!(serde_urlencoded::to_string(params), Ok("list=test".to_owned()));
+}
+
+#[test]
+fn serialize_list_of_enum() {
+    let params = &[("item", vec![X::A, X::B, X::C])];
+    assert_eq!(serde_urlencoded::to_string(params), Ok("item=A&item=B&item=C".to_owned()));
+}
+
+#[test]
 fn serialize_map() {
     let mut s = std::collections::BTreeMap::new();
     s.insert("a", "hello");
