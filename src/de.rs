@@ -3,7 +3,7 @@ use std::{borrow::Cow, io::Read};
 
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
 use serde::{
-    de::{self, value::MapDeserializer, Error as de_Error, IntoDeserializer},
+    de::{self, value::MapDeserializer, Error as _, IntoDeserializer},
     forward_to_deserialize_any,
 };
 
