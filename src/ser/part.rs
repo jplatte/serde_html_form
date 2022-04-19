@@ -1,6 +1,6 @@
 use std::str;
 
-use serde::ser;
+use serde::ser::{self, Serializer as _};
 
 use super::Error;
 
@@ -207,8 +207,7 @@ impl<S: Sink> PartSerializer<S> {
         I: itoa::Integer,
     {
         let mut buf = itoa::Buffer::new();
-        let part = buf.format(value);
-        ser::Serializer::serialize_str(self, part)
+        self.serialize_str(buf.format(value))
     }
 
     fn serialize_floating<F>(self, value: F) -> Result<S::Ok, Error>
@@ -216,7 +215,6 @@ impl<S: Sink> PartSerializer<S> {
         F: ryu::Float,
     {
         let mut buf = ryu::Buffer::new();
-        let part = buf.format(value);
-        ser::Serializer::serialize_str(self, part)
+        self.serialize_str(buf.format(value))
     }
 }
