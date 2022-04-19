@@ -15,12 +15,19 @@ edition = "2018"
 default = ["ryu"]
 
 [dependencies]
+# Percent encoding and mapping of query string to pair of key-values
 form_urlencoded = "1.0.1"
+# Used for internal buffering during deserialization
 indexmap = "1.8.1"
+# Fast integer serialization
 itoa = "1.0.1"
+# Fast and better-looking float serialization
 ryu = { version = "1.0.9", optional = true }
+# Contains the Serializer and Deserializer traits
 serde = "1.0.136"
 
 [dev-dependencies]
+# For the assert_matches! macro
 matches = "0.1.9"
+# Some tests use structs that derive Serialize / Deserialize
 serde = { version = "1.0.136", features = ["derive"] }
