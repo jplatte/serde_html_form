@@ -11,9 +11,6 @@ keywords = ["serde", "serialization", "urlencoded"]
 exclude = ["/.travis.yml", "/bors.toml"]
 edition = "2018"
 
-[badges]
-travis-ci = {repository = "nox/serde_urlencoded"}
-
 [dependencies]
 form_urlencoded = "1.0.1"
 indexmap = "1.8.1"
