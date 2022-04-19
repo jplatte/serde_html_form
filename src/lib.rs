@@ -1,4 +1,4 @@
-//! `x-www-form-urlencoded` meets Serde
+//! (De-)serialization support for the `application/x-www-form-urlencoded` format.
 
 pub mod de;
 pub mod ser;

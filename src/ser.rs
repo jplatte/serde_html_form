@@ -19,7 +19,7 @@ pub use self::error::Error;
 /// let meal = &[("bread", "baguette"), ("cheese", "comté"), ("meat", "ham"), ("fat", "butter")];
 ///
 /// assert_eq!(
-///     serde_urlencoded::to_string(meal),
+///     serde_html_form::to_string(meal),
 ///     Ok("bread=baguette&cheese=comt%C3%A9&meat=ham&fat=butter".to_owned())
 /// );
 /// ```
