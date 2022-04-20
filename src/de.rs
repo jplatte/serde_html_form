@@ -1,11 +1,10 @@
 //! Deserialization support for the `application/x-www-form-urlencoded` format.
 
-use std::io::Read;
+use std::{collections::VecDeque, fmt, io::Read};
 
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
-use indexmap::map::{self, IndexMap};
 use serde::{
-    de::{self, value::MapDeserializer},
+    de::{self, Expected},
     forward_to_deserialize_any,
 };
 
@@ -13,9 +12,8 @@ use serde::{
 pub use serde::de::value::Error;
 
 mod part;
-mod val_or_vec;
 
-use self::{part::Part, val_or_vec::ValOrVec};
+use self::part::Part;
 
 /// Deserializes a `application/x-www-form-urlencoded` value from a `&[u8]`.
 ///
@@ -80,22 +78,32 @@ where
 }
 
 /// A deserializer for the `application/x-www-form-urlencoded` format.
-///
-/// * Supported top-level outputs are structs, maps and sequences of pairs,
-///   with or without a given length.
-///
-/// * Main `deserialize` methods defers to `deserialize_map`.
-///
-/// * Everything else but `deserialize_seq` and `deserialize_seq_fixed_size`
-///   defers to `deserialize`.
 pub struct Deserializer<'de> {
-    inner: MapDeserializer<'de, EntryIterator<'de>, Error>,
+    count: usize,
+    items: VecDeque<Option<(Part<'de>, Part<'de>)>>,
 }
 
 impl<'de> Deserializer<'de> {
     /// Returns a new `Deserializer`.
     pub fn new(parse: UrlEncodedParse<'de>) -> Self {
-        Deserializer { inner: MapDeserializer::new(group_entries(parse).into_iter()) }
+        let items = parse.into_iter().map(|(k, v)| Some((Part(k), Part(v)))).collect();
+
+        Deserializer { count: 0, items }
+    }
+
+    fn remaining(&self) -> usize {
+        self.items.iter().filter(|item| item.is_some()).count()
+    }
+
+    fn end(self) -> Result<(), Error> {
+        let remaining = self.remaining();
+        if remaining == 0 {
+            Ok(())
+        } else {
+            // First argument is the number of elements in the data, second
+            // argument is the number of elements expected by the Deserialize.
+            Err(de::Error::invalid_length(self.count + remaining, &ExpectedInMap(self.count)))
+        }
     }
 }
 
@@ -106,28 +114,21 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        self.deserialize_map(visitor)
-    }
-
-    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: de::Visitor<'de>,
-    {
-        visitor.visit_map(self.inner)
+        visitor.visit_map(self)
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_seq(self.inner)
+        visitor.visit_seq(self)
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        self.inner.end()?;
+        self.end()?;
         visitor.visit_unit()
     }
 
@@ -152,6 +153,7 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         unit_struct
         newtype_struct
         tuple_struct
+        map
         struct
         identifier
         tuple
@@ -160,26 +162,51 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
     }
 }
 
-fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part<'_>>> {
-    use map::Entry::*;
+impl<'de> de::MapAccess<'de> for Deserializer<'de> {
+    type Error = Error;
 
-    let mut res = IndexMap::new();
-
-    for (key, value) in parse {
-        match res.entry(Part(key)) {
-            Vacant(v) => {
-                v.insert(ValOrVec::Val(Part(value)));
-            }
-            Occupied(mut o) => {
-                o.get_mut().push(Part(value));
-            }
-        }
+    fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>, Self::Error>
+    where
+        K: de::DeserializeSeed<'de>,
+    {
+        todo!()
     }
 
-    res
+    fn next_value_seed<V>(&mut self, seed: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::DeserializeSeed<'de>,
+    {
+        todo!()
+    }
+
+    fn size_hint(&self) -> Option<usize> {
+        Some(self.remaining())
+    }
 }
 
-type EntryIterator<'de> = map::IntoIter<Part<'de>, ValOrVec<Part<'de>>>;
+impl<'de> de::SeqAccess<'de> for Deserializer<'de> {
+    type Error = Error;
+
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
+    where
+        T: de::DeserializeSeed<'de>,
+    {
+        todo!()
+    }
+}
+
+// Copied from serde
+struct ExpectedInMap(usize);
+
+impl Expected for ExpectedInMap {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.0 == 1 {
+            write!(formatter, "1 element")
+        } else {
+            write!(formatter, "{} elements", self.0)
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests;
