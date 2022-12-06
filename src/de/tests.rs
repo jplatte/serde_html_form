@@ -57,6 +57,18 @@ fn deserialize_option_vec() {
 }
 
 #[test]
+fn deserialize_option_vec_empty() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<String>>,
+    }
+
+    let result = super::from_str("");
+
+    assert_eq!(result, Ok(Form { value: None }));
+}
+
+#[test]
 fn deserialize_unit() {
     assert_eq!(super::from_str(""), Ok(()));
     assert_eq!(super::from_str("&"), Ok(()));

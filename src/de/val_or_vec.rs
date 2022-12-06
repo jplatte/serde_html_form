@@ -202,6 +202,13 @@ where
         visitor.visit_unit()
     }
 
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_some(self)
+    }
+
     forward_to_part! {
         deserialize_bool,
         deserialize_char,
@@ -220,7 +227,6 @@ where
         deserialize_i64,
         deserialize_f32,
         deserialize_f64,
-        deserialize_option,
         deserialize_identifier,
         deserialize_map,
     }
