@@ -64,6 +64,9 @@ jobs:
           toolchain: ${{ matrix.rust }}
           override: true
 
+      - name: Load cache
+        uses: Swatinem/rust-cache@v1
+
       - name: Test
         uses: actions-rs/cargo@v1
         with:
