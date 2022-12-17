@@ -59,6 +59,26 @@ fn deserialize_option_vec() {
 }
 
 #[test]
+fn deserialize_option_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<f64>,
+    }
+
+    assert_eq!(super::from_str("value="), Ok(Form { value: None }));
+}
+
+#[test]
+fn deserialize_no_value_err() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: f64,
+    }
+
+    assert_eq!(super::from_str::<Form>("value=").unwrap_err().to_string(), "missing field `value`");
+}
+
+#[test]
 fn deserialize_unit() {
     assert_eq!(super::from_str(""), Ok(()));
     assert_eq!(super::from_str("&"), Ok(()));

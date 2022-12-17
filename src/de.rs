@@ -166,6 +166,10 @@ fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part
     let mut res = IndexMap::new();
 
     for (key, value) in parse {
+        if value.is_empty() {
+            continue;
+        }
+
         match res.entry(Part(key)) {
             Vacant(v) => {
                 v.insert(ValOrVec::Val(Part(value)));
