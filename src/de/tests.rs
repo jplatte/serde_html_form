@@ -45,6 +45,25 @@ fn deserialize_option() {
 }
 
 #[test]
+fn deserialize_empty_string() {
+    let result = vec![("first".to_owned(), "")];
+    assert_eq!(super::from_str("first="), Ok(result));
+}
+
+#[test]
+fn deserialize_vec_strings() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Vec<String>,
+    }
+
+    assert_eq!(
+        super::from_str("value=&value=abc"),
+        Ok(Form { value: vec!["".to_owned(), "abc".to_owned()] })
+    );
+}
+
+#[test]
 fn deserialize_option_vec() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
@@ -56,6 +75,78 @@ fn deserialize_option_vec() {
         Ok(Form { value: Some(vec!["abc".to_owned(), "def".to_owned()]) })
     );
     assert_eq!(super::from_str(""), Ok(Form { value: None }));
+}
+
+#[test]
+fn deserialize_option_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<f64>,
+    }
+
+    assert_eq!(super::from_str("value="), Ok(Form { value: None }));
+}
+
+#[test]
+fn deserialize_vec_options_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Vec<Option<f64>>,
+    }
+
+    assert_eq!(super::from_str("value=&value=&value="), Ok(Form { value: vec![None, None, None] }));
+}
+
+#[test]
+fn deserialize_vec_options_some_values() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Vec<Option<f64>>,
+    }
+
+    assert_eq!(
+        super::from_str("value=&value=4&value="),
+        Ok(Form { value: vec![None, Some(4.0), None] })
+    );
+}
+
+#[test]
+fn deserialize_option_vec_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<f64>>,
+    }
+
+    assert_eq!(
+        super::from_str::<Form>("value=&value=&value=").unwrap_err().to_string(),
+        "cannot parse float from empty string"
+    );
+}
+
+#[test]
+fn deserialize_option_vec_with_values() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<f64>>,
+    }
+
+    assert_eq!(
+        super::from_str("value=3&value=4&value=5"),
+        Ok(Form { value: Some(vec![3.0, 4.0, 5.0]) })
+    );
+}
+
+#[test]
+fn deserialize_no_value_err() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: f64,
+    }
+
+    assert_eq!(
+        super::from_str::<Form>("value=").unwrap_err().to_string(),
+        "cannot parse float from empty string"
+    );
 }
 
 #[test]

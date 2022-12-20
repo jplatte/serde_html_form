@@ -206,7 +206,10 @@ where
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_some(self)
+        match self {
+            ValOrVec::Val(val) => val.deserialize_option(visitor),
+            ValOrVec::Vec(_) => visitor.visit_some(self),
+        }
     }
 
     forward_to_part! {
