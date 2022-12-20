@@ -45,6 +45,12 @@ fn deserialize_option() {
 }
 
 #[test]
+fn deserialize_empty_string() {
+    let result = vec![("first".to_owned(), "")];
+    assert_eq!(super::from_str("first="), Ok(result));
+}
+
+#[test]
 fn deserialize_option_vec() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
