@@ -92,6 +92,19 @@ fn deserialize_option_vec_no_value() {
 }
 
 #[test]
+fn deserialize_option_vec_with_values() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<f64>>,
+    }
+
+    assert_eq!(
+        super::from_str("value=3&value=4&value=5"),
+        Ok(Form { value: Some(vec![3.0, 4.0, 5.0]) })
+    );
+}
+
+#[test]
 fn deserialize_no_value_err() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
