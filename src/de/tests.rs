@@ -69,13 +69,39 @@ fn deserialize_option_no_value() {
 }
 
 #[test]
+fn deserialize_vec_options_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Vec<Option<f64>>,
+    }
+
+    assert_eq!(super::from_str("value=&value=&value="), Ok(Form { value: vec![None, None, None] }));
+}
+
+#[test]
+fn deserialize_option_vec_no_value() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<f64>>,
+    }
+
+    assert_eq!(
+        super::from_str::<Form>("value=&value=&value=").unwrap_err().to_string(),
+        "cannot parse float from empty string"
+    );
+}
+
+#[test]
 fn deserialize_no_value_err() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
         value: f64,
     }
 
-    assert_eq!(super::from_str::<Form>("value=").unwrap_err().to_string(), "cannot parse float from empty string");
+    assert_eq!(
+        super::from_str::<Form>("value=").unwrap_err().to_string(),
+        "cannot parse float from empty string"
+    );
 }
 
 #[test]
