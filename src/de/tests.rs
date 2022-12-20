@@ -51,6 +51,19 @@ fn deserialize_empty_string() {
 }
 
 #[test]
+fn deserialize_vec_strings() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Vec<String>,
+    }
+
+    assert_eq!(
+        super::from_str("value=&value=abc"),
+        Ok(Form { value: vec!["".to_owned(), "abc".to_owned()] })
+    );
+}
+
+#[test]
 fn deserialize_option_vec() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
