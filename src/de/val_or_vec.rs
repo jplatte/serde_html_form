@@ -1,6 +1,5 @@
 use std::{hint::unreachable_unchecked, iter, mem, vec};
 
-use crate::de::part::Part;
 use serde::de::{
     self,
     value::{Error, SeqDeserializer},
@@ -87,7 +86,7 @@ impl<T> Iterator for IntoIter<T> {
 
 impl<'de, T> IntoDeserializer<'de> for ValOrVec<T>
 where
-    T: IntoDeserializer<'de> + Deserializer<'de, Error = Error> + IsEmpty,
+    T: IntoDeserializer<'de> + Deserializer<'de, Error = Error>,
 {
     type Deserializer = Self;
 
@@ -108,19 +107,9 @@ macro_rules! forward_to_part {
     }
 }
 
-trait IsEmpty {
-    fn is_empty(&self) -> bool;
-}
-
-impl IsEmpty for Part<'_> {
-    fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
-}
-
 impl<'de, T> Deserializer<'de> for ValOrVec<T>
 where
-    T: IntoDeserializer<'de> + Deserializer<'de, Error = Error> + IsEmpty,
+    T: IntoDeserializer<'de> + Deserializer<'de, Error = Error>,
 {
     type Error = Error;
 
@@ -217,15 +206,9 @@ where
     where
         V: de::Visitor<'de>,
     {
-        let should_visit_none = match &self {
-            ValOrVec::Val(val) if val.is_empty() => true,
-            _ => false,
-        };
-
-        if should_visit_none {
-            visitor.visit_none()
-        } else {
-            visitor.visit_some(self)
+        match self {
+            ValOrVec::Val(val) => val.deserialize_option(visitor),
+            ValOrVec::Vec(_) => visitor.visit_some(self),
         }
     }
 
