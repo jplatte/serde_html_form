@@ -75,7 +75,7 @@ fn deserialize_no_value_err() {
         value: f64,
     }
 
-    assert_eq!(super::from_str::<Form>("value=").unwrap_err().to_string(), "missing field `value`");
+    assert_eq!(super::from_str::<Form>("value=").unwrap_err().to_string(), "cannot parse float from empty string");
 }
 
 #[test]
