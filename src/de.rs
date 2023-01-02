@@ -132,6 +132,13 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         visitor.visit_unit()
     }
 
+    fn deserialize_newtype_struct<V>(self, _name: &str, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_newtype_struct(self)
+    }
+
     forward_to_deserialize_any! {
         bool
         u8
@@ -151,7 +158,6 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         bytes
         byte_buf
         unit_struct
-        newtype_struct
         tuple_struct
         struct
         identifier
