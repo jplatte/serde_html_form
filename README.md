@@ -7,9 +7,14 @@ the [`application/x-www-form-urlencoded`][urlencoded] format. It is built
 upon [Serde], a high performance generic serialization framework and [rust-url],
 a URL parser for Rust.
 
+It is a fork of [`serde_urlencoded`], with additional support for maps or
+structs with fields of sequence type (e.g. `Vec<String>`). It also supports
+`Option` in values, treating `foo=` as `foo: None`.
+
 [rust-url]: https://github.com/servo/rust-url
 [Serde]: https://github.com/serde-rs/serde
 [urlencoded]: https://url.spec.whatwg.org/#application/x-www-form-urlencoded
+[`serde_urlencoded`]: https://github.com/nox/serde_urlencoded
 
 ## Installation
 
@@ -18,7 +23,7 @@ This crate works with Cargo and can be found on
 
 ```toml
 [dependencies]
-serde_html_form = "0.1.0"
+serde_html_form = "0.2.0"
 ```
 
 The documentation is available on [docs.rs].
