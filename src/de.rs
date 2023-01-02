@@ -89,13 +89,13 @@ where
 /// * Everything else but `deserialize_seq` and `deserialize_seq_fixed_size`
 ///   defers to `deserialize`.
 pub struct Deserializer<'de> {
-    inner: MapDeserializer<'de, EntryIterator<'de>, Error>,
+    inner: UrlEncodedParse<'de>,
 }
 
 impl<'de> Deserializer<'de> {
     /// Returns a new `Deserializer`.
     pub fn new(parse: UrlEncodedParse<'de>) -> Self {
-        Deserializer { inner: MapDeserializer::new(group_entries(parse).into_iter()) }
+        Deserializer { inner: parse }
     }
 }
 
@@ -113,21 +113,22 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_map(self.inner)
+        visitor.visit_map(MapDeserializer::new(group_entries(self.inner).into_iter()))
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_seq(self.inner)
+        visitor.visit_seq(MapDeserializer::new(PartIterator(self.inner)))
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: de::Visitor<'de>,
     {
-        self.inner.end()?;
+        let deserializer = MapDeserializer::new(PartIterator(self.inner));
+        deserializer.end()?;
         visitor.visit_unit()
     }
 
@@ -160,6 +161,16 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
     }
 }
 
+struct PartIterator<'de>(UrlEncodedParse<'de>);
+
+impl<'de> Iterator for PartIterator<'de> {
+    type Item = (Part<'de>, Part<'de>);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(|(k, v)| (Part(k), Part(v)))
+    }
+}
+
 fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part<'_>>> {
     use map::Entry::*;
 
@@ -178,8 +189,6 @@ fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part
 
     res
 }
-
-type EntryIterator<'de> = map::IntoIter<Part<'de>, ValOrVec<Part<'de>>>;
 
 #[cfg(test)]
 mod tests;

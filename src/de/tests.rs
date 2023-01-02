@@ -66,9 +66,7 @@ fn deserialize_map_vec() {
 }
 
 #[test]
-#[ignore]
 fn deserialize_tuple_list() {
-    // FIXME: Make this work. Note to self: requires replacing MapDeserializer
     let result = vec![("foo".to_owned(), 1), ("bar".to_owned(), 2), ("foo".to_owned(), 3)];
     assert_eq!(super::from_str("foo=1&bar=2&foo=3"), Ok(result));
 }
