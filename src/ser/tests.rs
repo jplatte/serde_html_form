@@ -49,6 +49,12 @@ fn serialize_map_bool() {
     assert_eq!(super::to_string(params), Ok("one=true&two=false".to_owned()));
 }
 
+#[test]
+fn serialize_map_duplicate_keys() {
+    let params = &[("foo", "a"), ("foo", "b")];
+    assert_eq!(super::to_string(params), Ok("foo=a&foo=b".to_owned()));
+}
+
 #[derive(Serialize)]
 enum X {
     A,

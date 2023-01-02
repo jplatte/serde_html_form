@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, PartialEq)]
@@ -48,6 +50,27 @@ fn deserialize_option() {
 fn deserialize_empty_string() {
     let result = vec![("first".to_owned(), "")];
     assert_eq!(super::from_str("first="), Ok(result));
+}
+
+#[test]
+fn deserialize_map() {
+    let result = BTreeMap::from_iter([("first".to_owned(), 23), ("second".to_owned(), 42)]);
+    assert_eq!(super::from_str("first=23&second=42"), Ok(result));
+}
+
+#[test]
+fn deserialize_map_vec() {
+    let result =
+        BTreeMap::from_iter([("first".to_owned(), vec![23, 1]), ("second".to_owned(), vec![42])]);
+    assert_eq!(super::from_str("first=23&second=42&first=1"), Ok(result));
+}
+
+#[test]
+#[ignore]
+fn deserialize_tuple_list() {
+    // FIXME: Make this work. Note to self: requires replacing MapDeserializer
+    let result = vec![("foo".to_owned(), 1), ("bar".to_owned(), 2), ("foo".to_owned(), 3)];
+    assert_eq!(super::from_str("foo=1&bar=2&foo=3"), Ok(result));
 }
 
 #[test]
