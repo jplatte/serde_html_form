@@ -98,7 +98,7 @@ struct ListStruct {
 #[test]
 fn serialize_newstruct() {
     let s = NewStruct { list: vec!["hello".into(), "world".into()] };
-    assert_eq!("list=hello&list=world".to_string(), super::to_string(s).unwrap());
+    assert_eq!("list=hello&list=world".to_owned(), super::to_string(s).unwrap());
 }
 
 #[test]
@@ -122,13 +122,13 @@ fn serialize_vec_str() {
 #[test]
 fn serialize_struct_opt() {
     let s = Struct { list: vec![Some("hello".into()), Some("world".into())] };
-    assert_eq!("list=hello&list=world".to_string(), super::to_string(s).unwrap());
+    assert_eq!("list=hello&list=world".to_owned(), super::to_string(s).unwrap());
 }
 
 #[test]
 fn serialize_struct_newtype() {
     let s = ListStruct { list: vec![NewType(0), NewType(1)] };
-    assert_eq!("list=0&list=1".to_string(), super::to_string(s).unwrap());
+    assert_eq!("list=0&list=1".to_owned(), super::to_string(s).unwrap());
 }
 
 #[test]
@@ -159,7 +159,7 @@ fn serialize_multiple_lists() {
 
 #[test]
 fn serialize_nested_list() {
-    let params = &[("list", vec![vec![0u8]])];
+    let params = &[("list", vec![vec![0_u8]])];
     assert!(super::to_string(params).unwrap_err().to_string().contains("unsupported"));
 }
 

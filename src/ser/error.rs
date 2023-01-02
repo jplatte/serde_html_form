@@ -13,7 +13,7 @@ pub struct Error(ErrorKind);
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum ErrorKind {
     Custom(Cow<'static, str>),
-    Utf8(str::Utf8Error),
+    Utf8(Utf8Error),
 }
 
 impl Error {
@@ -51,7 +51,7 @@ impl Error {
 }
 
 impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.0 {
             ErrorKind::Custom(msg) => msg.fmt(f),
             ErrorKind::Utf8(err) => write!(f, "invalid UTF-8: {}", err),
