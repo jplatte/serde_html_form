@@ -106,7 +106,7 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
     where
         V: de::Visitor<'de>,
     {
-        self.deserialize_map(visitor)
+        self.deserialize_seq(visitor)
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -139,6 +139,18 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         visitor.visit_newtype_struct(self)
     }
 
+    fn deserialize_struct<V>(
+        self,
+        _name: &'static str,
+        _fields: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.deserialize_map(visitor)
+    }
+
     forward_to_deserialize_any! {
         bool
         u8
@@ -159,7 +171,6 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         byte_buf
         unit_struct
         tuple_struct
-        struct
         identifier
         tuple
         enum
