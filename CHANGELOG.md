@@ -1,3 +1,7 @@
+# 0.2.1
+
+This release only upgrades one of the crates' private dependencies.
+
 # 0.2.0
 
 Support deserialization of sequences with duplicate keys.
