@@ -17,7 +17,7 @@ default = ["ryu"]
 # Percent encoding and mapping of query string to pair of key-values
 form_urlencoded = "1.0.1"
 # Used for internal buffering during deserialization
-indexmap = "1.8.1"
+indexmap = "2.0.0"
 # Fast integer serialization
 itoa = "1.0.1"
 # Fast and better-looking float serialization
