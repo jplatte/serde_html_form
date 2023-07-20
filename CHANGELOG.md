@@ -1,3 +1,7 @@
+# 0.2.2
+
+This release only upgrades one of the crates' dev-dependencies.
+
 # 0.2.1
 
 This release only upgrades one of the crates' private dependencies.
