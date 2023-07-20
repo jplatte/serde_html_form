@@ -27,6 +27,6 @@ serde = "1.0.136"
 
 [dev-dependencies]
 # For the assert_matches! macro
-matches = "0.1.9"
+assert_matches2 = "0.1.0"
 # Some tests use structs that derive Serialize / Deserialize
 serde = { version = "1.0.136", features = ["derive"] }

@@ -239,7 +239,7 @@ where
 mod tests {
     use std::borrow::Cow;
 
-    use matches::assert_matches;
+    use assert_matches2::assert_matches;
 
     use super::ValOrVec;
 
@@ -248,7 +248,8 @@ mod tests {
         let mut x = ValOrVec::Val(Cow::Borrowed("a"));
         x.push(Cow::Borrowed("b"));
         x.push(Cow::Borrowed("c"));
-        assert_matches!(x, ValOrVec::Vec(v) if v == vec!["a", "b", "c"]);
+        assert_matches!(x, ValOrVec::Vec(v));
+        assert_eq!(v, vec!["a", "b", "c"]);
     }
 
     #[test]
@@ -256,9 +257,7 @@ mod tests {
         let mut x = ValOrVec::Val(Cow::from("a".to_owned()));
         x.push(Cow::from("b".to_owned()));
         x.push(Cow::from("c".to_owned()));
-        assert_matches!(
-            x,
-            ValOrVec::Vec(v) if v == vec!["a".to_owned(), "b".to_owned(), "c".to_owned()]
-        );
+        assert_matches!(x, ValOrVec::Vec(v));
+        assert_eq!(v, vec!["a".to_owned(), "b".to_owned(), "c".to_owned()]);
     }
 }
