@@ -11,7 +11,7 @@ It is a fork of [`serde_urlencoded`], with additional support for maps or
 structs with fields of sequence type (e.g. `Vec<String>`). It also supports
 `Option` in values, treating `foo=` as `foo: None`.
 
-For vectors that may be empty, it is best to use a `Vec` with the
+⚠️ For vectors that may be empty, it is best to use a `Vec` with the
 `#[serde(default)]` attribute, as the combination `Option<Vec<_>>` can lead
 to unexpected behavior when deserializing a `Vec` with exactly one value.
 
