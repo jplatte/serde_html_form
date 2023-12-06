@@ -1,5 +1,4 @@
-//! (De-)serialization support for the `application/x-www-form-urlencoded` format.
-
+#![doc = include_str!("../README.md")]
 #![warn(
     rust_2018_idioms,
     unused_qualifications,
