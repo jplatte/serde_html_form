@@ -22,11 +22,13 @@ often not work as expected.
 
 ## Examples
 
+Sequences like `value=x&value=y`:
+
 ```rust
 use serde::Deserialize;
 
 #[derive(Debug, PartialEq, Deserialize)]
-struct FormA {
+struct Form {
     // By default, at least one occurrence of this field must be present (this
     // is mandated by how serde works).
     //
@@ -39,15 +41,21 @@ struct FormA {
 
 assert_eq!(
     serde_html_form::from_str("value=&value=abc"),
-    Ok(FormA { value: vec!["".to_owned(), "abc".to_owned()] })
+    Ok(Form { value: vec!["".to_owned(), "abc".to_owned()] })
 );
 assert_eq!(
     serde_html_form::from_str(""),
-    Ok(FormA { value: vec![] })
+    Ok(Form { value: vec![] })
 );
+```
+
+Sequences like `value[]=x&value[]=y`:
+
+```rust
+use serde::Deserialize;
 
 #[derive(Debug, PartialEq, Deserialize)]
-struct FormB {
+struct Form {
     // If you want to support `value[]=x&value[]=y`, you can use
     // `serde(rename)`. You could even use `serde(alias)` instead to allow both,
     // but note that mixing both in one input string would also be allowed then.
@@ -57,33 +65,21 @@ struct FormB {
 
 assert_eq!(
     serde_html_form::from_str("value[]=x&value[]=y"),
-    Ok(FormB { value: vec!["x".to_owned(), "y".to_owned()] })
+    Ok(Form { value: vec!["x".to_owned(), "y".to_owned()] })
 );
 assert_eq!(
     serde_html_form::from_str("value[]=hello"),
-    Ok(FormB { value: vec!["hello".to_owned()] })
+    Ok(Form { value: vec!["hello".to_owned()] })
 );
+```
+
+Optional values:
+
+```rust
+use serde::Deserialize;
 
 #[derive(Debug, PartialEq, Deserialize)]
-struct FormC {
-    // If you want to support `value[]=x&value[]=y`, you can use
-    // `serde(rename)`. You could even use `serde(alias)` instead to allow both,
-    // but note that mixing both in one input string would also be allowed then.
-    #[serde(default, rename = "value[]")]
-    value: Vec<String>,
-}
-
-assert_eq!(
-    serde_html_form::from_str("value[]=x&value[]=y"),
-    Ok(FormC { value: vec!["x".to_owned(), "y".to_owned()] })
-);
-assert_eq!(
-    serde_html_form::from_str(""),
-    Ok(FormC { value: vec![] })
-);
-
-#[derive(Debug, PartialEq, Deserialize)]
-struct FormD {
+struct Form {
     // Finally, this crate also supports deserializing empty values as `None`
     // if your values are `Option`s.
     // Note that serde's `Deserialize` derive implicitly allows omission of
@@ -95,7 +91,7 @@ struct FormD {
 
 assert_eq!(
     serde_html_form::from_str("at_least_one=5"),
-    Ok(FormD {
+    Ok(Form {
         // Implicit `serde(default)` in action.
         single: None,
         // `serde_html_form`'s support for optional values being used.
@@ -104,7 +100,7 @@ assert_eq!(
 );
 assert_eq!(
     serde_html_form::from_str("at_least_one=&single=1&at_least_one=5"),
-    Ok(FormD {
+    Ok(Form {
         single: Some(1),
         at_least_one: vec![
             // Empty strings get deserialized as `None`.
@@ -116,7 +112,7 @@ assert_eq!(
     })
 );
 assert!(
-    serde_html_form::from_str::<FormD>("").is_err(),
+    serde_html_form::from_str::<Form>("").is_err(),
     "at_least_one is not part of the input"
 );
 ```
