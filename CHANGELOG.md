@@ -1,3 +1,8 @@
+# 0.2.3
+
+Improve README and crate documentation (now the exact same, instead of just a
+single-line description).
+
 # 0.2.2
 
 This release only upgrades one of the crates' dev-dependencies.
