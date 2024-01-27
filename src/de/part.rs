@@ -66,7 +66,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_enum(ValueEnumAccess(self.0))
+        visitor.visit_enum(self)
     }
 
     fn deserialize_newtype_struct<V>(
@@ -112,9 +112,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     }
 }
 
-struct ValueEnumAccess<'de>(Cow<'de, str>);
-
-impl<'de> de::EnumAccess<'de> for ValueEnumAccess<'de> {
+impl<'de> de::EnumAccess<'de> for Part<'de> {
     type Error = Error;
     type Variant = UnitOnlyVariantAccess;
 
@@ -127,7 +125,7 @@ impl<'de> de::EnumAccess<'de> for ValueEnumAccess<'de> {
     }
 }
 
-struct UnitOnlyVariantAccess;
+pub(crate) struct UnitOnlyVariantAccess;
 
 impl<'de> de::VariantAccess<'de> for UnitOnlyVariantAccess {
     type Error = Error;
