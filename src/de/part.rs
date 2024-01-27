@@ -80,6 +80,13 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
         visitor.visit_newtype_struct(self)
     }
 
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_seq(PartSeqAccess(Some(self.0)))
+    }
+
     forward_to_deserialize_any! {
         char
         str
@@ -93,7 +100,6 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
         identifier
         tuple
         ignored_any
-        seq
         map
     }
 
@@ -122,6 +128,26 @@ impl<'de> de::EnumAccess<'de> for Part<'de> {
     {
         let variant = seed.deserialize(self.0.into_deserializer())?;
         Ok((variant, UnitOnlyVariantAccess))
+    }
+}
+
+struct PartSeqAccess<'de>(Option<Cow<'de, str>>);
+
+impl<'de> de::SeqAccess<'de> for PartSeqAccess<'de> {
+    type Error = Error;
+
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
+    where
+        T: de::DeserializeSeed<'de>,
+    {
+        match self.0.take() {
+            Some(value) => seed.deserialize(value.into_deserializer()).map(Some),
+            None => Ok(None),
+        }
+    }
+
+    fn size_hint(&self) -> Option<usize> {
+        Some(self.0.is_some() as usize)
     }
 }
 

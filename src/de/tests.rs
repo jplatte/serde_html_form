@@ -91,11 +91,12 @@ fn deserialize_option_vec() {
         value: Option<Vec<String>>,
     }
 
+    assert_eq!(super::from_str(""), Ok(Form { value: None }));
+    assert_eq!(super::from_str("value=abc"), Ok(Form { value: Some(vec!["abc".to_owned()]) }));
     assert_eq!(
         super::from_str("value=abc&value=def"),
         Ok(Form { value: Some(vec!["abc".to_owned(), "def".to_owned()]) })
     );
-    assert_eq!(super::from_str(""), Ok(Form { value: None }));
 }
 
 #[test]
