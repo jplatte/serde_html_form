@@ -11,10 +11,6 @@ It is a fork of [`serde_urlencoded`], with additional support for maps or
 structs with fields of sequence type (e.g. `Vec<String>`). It also supports
 `Option` in values, treating `foo=` as `foo: None`.
 
-⚠️ For vectors that may be empty, it is best to use a `Vec` with the
-`#[serde(default)]` attribute, as the combination `Option<Vec<_>>` will
-often not work as expected.
-
 [rust-url]: https://github.com/servo/rust-url
 [Serde]: https://github.com/serde-rs/serde
 [urlencoded]: https://url.spec.whatwg.org/#application/x-www-form-urlencoded
