@@ -1,3 +1,7 @@
+# 0.2.4
+
+Fix deserialization of optional sequences of a single element.
+
 # 0.2.3
 
 Improve README and crate documentation (now the exact same, instead of just a
