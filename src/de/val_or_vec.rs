@@ -7,7 +7,7 @@ use serde::de::{
 };
 
 #[derive(Debug)]
-pub enum ValOrVec<T> {
+pub(crate) enum ValOrVec<T> {
     Val(T),
     Vec(Vec<T>),
 }
