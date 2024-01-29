@@ -10,6 +10,9 @@ exclude = ["/.github"]
 edition = "2021"
 rust-version = "1.56"
 
+[lib]
+bench = false
+
 [features]
 default = ["ryu"]
 
@@ -30,3 +33,11 @@ serde = "1.0.136"
 assert_matches2 = "0.1.0"
 # Some tests use structs that derive Serialize / Deserialize
 serde = { version = "1.0.136", features = ["derive"] }
+
+# For benchmarks
+divan = "0.1.11"
+serde_urlencoded = "0.7.1"
+
+[[bench]]
+name = "upstream_comparison"
+harness = false
