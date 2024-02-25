@@ -24,9 +24,28 @@ pub use self::error::Error;
 /// );
 /// ```
 pub fn to_string<T: ser::Serialize>(input: T) -> Result<String, Error> {
-    let mut urlencoder = UrlEncodedSerializer::new("".to_owned());
+    let mut target = String::new();
+    push_to_string(&mut target, input)?;
+    Ok(target)
+}
+
+/// Serializes a value into the provided `application/x-www-form-urlencoded` `String` buffer.
+///
+/// ```
+/// let meal = &[("bread", "baguette"), ("cheese", "comté"), ("meat", "ham"), ("fat", "butter")];
+///
+/// let mut target = "/cook?".to_owned();
+///
+/// serde_html_form::ser::push_to_string(&mut target, meal).unwrap();
+///
+/// assert_eq!(target, "/cook?bread=baguette&cheese=comt%C3%A9&meat=ham&fat=butter");
+/// ```
+pub fn push_to_string<T: ser::Serialize>(target: &mut String, input: T) -> Result<(), Error> {
+    let start_position = target.len();
+    let mut urlencoder = UrlEncodedSerializer::for_suffix(target, start_position);
     input.serialize(Serializer::new(&mut urlencoder))?;
-    Ok(urlencoder.finish())
+    urlencoder.finish();
+    Ok(())
 }
 
 /// A serializer for the `application/x-www-form-urlencoded` format.
