@@ -1,3 +1,8 @@
+# 0.2.5
+
+Add `push_to_string` for serializing a struct to the end of an existing `String`
+buffer (instead of allocating a fresh one for the serialized output).
+
 # 0.2.4
 
 Fix deserialization of optional sequences of a single element.
