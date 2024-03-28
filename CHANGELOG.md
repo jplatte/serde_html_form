@@ -1,3 +1,7 @@
+# 0.2.6
+
+Fix deserialization of optional sequences of a single non-string element.
+
 # 0.2.5
 
 Add `push_to_string` for serializing a struct to the end of an existing `String`
