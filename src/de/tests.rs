@@ -100,6 +100,18 @@ fn deserialize_option_vec() {
 }
 
 #[test]
+fn deserialize_option_vec_int() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct Form {
+        value: Option<Vec<i32>>,
+    }
+
+    assert_eq!(super::from_str(""), Ok(Form { value: None }));
+    assert_eq!(super::from_str("value=0"), Ok(Form { value: Some(vec![0]) }));
+    assert_eq!(super::from_str("value=3&value=-1"), Ok(Form { value: Some(vec![3, -1]) }));
+}
+
+#[test]
 fn deserialize_option_no_value() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {

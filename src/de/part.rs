@@ -84,7 +84,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     where
         V: de::Visitor<'de>,
     {
-        visitor.visit_seq(PartSeqAccess(Some(self.0)))
+        visitor.visit_seq(PartSeqAccess(Some(self)))
     }
 
     forward_to_deserialize_any! {
@@ -131,7 +131,7 @@ impl<'de> de::EnumAccess<'de> for Part<'de> {
     }
 }
 
-struct PartSeqAccess<'de>(Option<Cow<'de, str>>);
+struct PartSeqAccess<'de>(Option<Part<'de>>);
 
 impl<'de> de::SeqAccess<'de> for PartSeqAccess<'de> {
     type Error = Error;
@@ -141,7 +141,7 @@ impl<'de> de::SeqAccess<'de> for PartSeqAccess<'de> {
         T: de::DeserializeSeed<'de>,
     {
         match self.0.take() {
-            Some(value) => seed.deserialize(value.into_deserializer()).map(Some),
+            Some(value) => seed.deserialize(value).map(Some),
             None => Ok(None),
         }
     }
