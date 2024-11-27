@@ -38,6 +38,9 @@ serde = { version = "1.0.136", features = ["derive"] }
 divan = "0.1.11"
 serde_urlencoded = "0.7.1"
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }
+
 [[bench]]
 name = "upstream_comparison"
 harness = false
