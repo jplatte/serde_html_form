@@ -9,7 +9,7 @@ pub enum Key<'key> {
     Dynamic(Cow<'key, str>),
 }
 
-impl<'key> Deref for Key<'key> {
+impl Deref for Key<'_> {
     type Target = str;
 
     fn deref(&self) -> &str {

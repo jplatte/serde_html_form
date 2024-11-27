@@ -29,7 +29,7 @@ where
     }
 }
 
-impl<'input, 'key, 'target, Target> Sink for ValueSink<'input, 'key, 'target, Target>
+impl<'target, Target> Sink for ValueSink<'_, '_, 'target, Target>
 where
     Target: 'target + UrlEncodedTarget,
 {
@@ -70,16 +70,16 @@ where
     }
 }
 
-impl<'input, 'key, 'target, Target> SerializeSeq for ValueSink<'input, 'key, 'target, Target>
+impl<'target, Target> SerializeSeq for ValueSink<'_, '_, 'target, Target>
 where
     Target: 'target + UrlEncodedTarget,
 {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    fn serialize_element<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         value.serialize(PartSerializer::new(ValueSink {
             urlencoder: self.urlencoder,
