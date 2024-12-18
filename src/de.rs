@@ -38,7 +38,7 @@ pub fn from_bytes<'de, T>(input: &'de [u8]) -> Result<T, Error>
 where
     T: de::Deserialize<'de>,
 {
-    T::deserialize(Deserializer::new(parse(input)))
+    T::deserialize(Deserializer::from_bytes(input))
 }
 
 /// Deserializes a `application/x-www-form-urlencoded` value from a `&str`.
@@ -96,6 +96,11 @@ impl<'de> Deserializer<'de> {
     /// Returns a new `Deserializer`.
     pub fn new(parse: UrlEncodedParse<'de>) -> Self {
         Deserializer { inner: parse }
+    }
+
+    /// Returns a new `Deserializer` from a `&[u8]`.
+    pub fn from_bytes(input: &'de [u8]) -> Self {
+        Self::new(parse(input))
     }
 }
 
