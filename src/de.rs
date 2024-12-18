@@ -1,5 +1,6 @@
 //! Deserialization support for the `application/x-www-form-urlencoded` format.
 
+use std::borrow::Cow;
 use std::io::Read;
 
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
@@ -175,6 +176,46 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         tuple
         enum
         ignored_any
+    }
+}
+
+pub fn empty_as_none<'de, T, D>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    T: de::Deserialize<'de>,
+    D: serde::Deserializer<'de>,
+{
+    use de::Deserialize;
+
+    let cow = Cow::<'de, str>::deserialize(deserializer)?;
+    empty_as_none_cow(cow).map_err(de::Error::custom)
+}
+
+pub fn empty_as_none_vec<'de, T, D>(deserializer: D) -> Result<Vec<Option<T>>, D::Error>
+where
+    T: de::Deserialize<'de>,
+    D: serde::Deserializer<'de>,
+{
+    use de::Deserialize;
+
+    Vec::<Cow<'de, str>>::deserialize(deserializer)?
+        .into_iter()
+        .map(empty_as_none_cow)
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(de::Error::custom)
+}
+
+fn empty_as_none_cow<'de, T>(
+    cow: Cow<'de, str>,
+) -> Result<Option<T>, <Part<'_> as de::Deserializer<'de>>::Error>
+where
+    T: de::Deserialize<'de>,
+{
+    use de::IntoDeserializer;
+
+    if cow.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(T::deserialize(Part(cow).into_deserializer())?))
     }
 }
 
