@@ -1,3 +1,7 @@
+# 0.2.7
+
+Add `Deserializer::from_bytes`.
+
 # 0.2.6
 
 Fix deserialization of optional sequences of a single non-string element.
