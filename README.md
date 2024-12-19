@@ -82,6 +82,7 @@ struct Form {
     // `Option`-typed fields (except when combined with some other attributes).
     single: Option<u32>,
     // Not using `serde(default)` here to require at least one occurrence.
+    #[serde(deserialize_with = "serde_html_form::de::empty_as_none_vec")]
     at_least_one: Vec<Option<u32>>,
 }
 
