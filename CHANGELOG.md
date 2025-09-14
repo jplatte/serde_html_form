@@ -1,3 +1,7 @@
+# 0.2.8
+
+Switch `serde` dependency to `serde_core`.
+
 # 0.2.7
 
 Add `Deserializer::from_bytes`.
