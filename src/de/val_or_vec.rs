@@ -1,6 +1,6 @@
 use std::{hint::unreachable_unchecked, iter, mem, vec};
 
-use serde::de::{
+use serde_core::de::{
     self,
     value::{Error, SeqDeserializer},
     Deserializer, IntoDeserializer,

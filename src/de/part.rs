@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use serde::{
+use serde_core::{
     de::{self, Error as _, IntoDeserializer},
     forward_to_deserialize_any,
 };

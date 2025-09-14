@@ -1,7 +1,7 @@
 use std::{borrow::Cow, mem};
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
-use serde::ser;
+use serde_core::ser;
 
 use crate::ser::{key::KeySink, part::PartSerializer, value::ValueSink, Error};
 

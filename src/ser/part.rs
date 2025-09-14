@@ -1,6 +1,6 @@
 use std::str;
 
-use serde::ser::{self, Serializer as _};
+use serde_core::ser::{self, Serializer as _};
 
 use super::Error;
 

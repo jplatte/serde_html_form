@@ -4,7 +4,7 @@ use std::{
     str::{self, Utf8Error},
 };
 
-use serde::ser;
+use serde_core::ser;
 
 /// Errors returned during serializing to `application/x-www-form-urlencoded`.
 #[derive(Clone, Debug, PartialEq, Eq)]

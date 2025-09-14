@@ -4,13 +4,13 @@ use std::io::Read;
 
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
 use indexmap::map::{self, IndexMap};
-use serde::{
+use serde_core::{
     de::{self, value::MapDeserializer},
     forward_to_deserialize_any,
 };
 
 #[doc(inline)]
-pub use serde::de::value::Error;
+pub use serde_core::de::value::Error;
 
 mod part;
 mod val_or_vec;

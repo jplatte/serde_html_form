@@ -26,13 +26,13 @@ itoa = "1.0.1"
 # Fast and better-looking float serialization
 ryu = { version = "1.0.9", optional = true }
 # Contains the Serializer and Deserializer traits
-serde = "1.0.136"
+serde_core = "1.0.221"
 
 [dev-dependencies]
 # For the assert_matches! macro
 assert_matches2 = "0.1.0"
 # Some tests use structs that derive Serialize / Deserialize
-serde = { version = "1.0.136", features = ["derive"] }
+serde = { version = "1.0.221", features = ["derive"] }
 
 # For benchmarks
 divan = "0.1.11"

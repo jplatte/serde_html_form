@@ -9,7 +9,7 @@ mod value;
 use std::{borrow::Cow, str};
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
-use serde::ser;
+use serde_core::ser;
 
 pub use self::error::Error;
 

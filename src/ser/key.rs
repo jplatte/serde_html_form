@@ -1,6 +1,6 @@
 use std::{borrow::Cow, ops::Deref};
 
-use serde::ser::{self, Serialize};
+use serde_core::ser::{self, Serialize};
 
 use super::{part::Sink, Error};
 

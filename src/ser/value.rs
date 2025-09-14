@@ -1,7 +1,7 @@
 use std::str;
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
-use serde::ser::{Serialize, SerializeSeq};
+use serde_core::ser::{Serialize, SerializeSeq};
 
 use super::{
     part::{PartSerializer, Sink},
