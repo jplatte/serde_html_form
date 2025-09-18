@@ -115,6 +115,7 @@ fn deserialize_option_vec_int() {
 fn deserialize_option_no_value() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none")]
         value: Option<f64>,
     }
 
@@ -125,6 +126,7 @@ fn deserialize_option_no_value() {
 fn deserialize_vec_options_no_value() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none_vec")]
         value: Vec<Option<f64>>,
     }
 
@@ -135,6 +137,7 @@ fn deserialize_vec_options_no_value() {
 fn deserialize_vec_options_some_values() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none_vec")]
         value: Vec<Option<f64>>,
     }
 
@@ -209,4 +212,36 @@ fn deserialize_unit_enum() {
 #[test]
 fn deserialize_unit_type() {
     assert_eq!(super::from_str(""), Ok(()));
+}
+
+#[test]
+fn issue_13() {
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct FormA {
+        foo: Option<String>,
+    }
+
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct FormB {
+        foo: Option<Vec<String>>,
+    }
+
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct FormA2 {
+        #[serde(deserialize_with = "crate::de::empty_as_none")]
+        foo: Option<f64>,
+    }
+
+    #[derive(Deserialize, PartialEq, Debug)]
+    struct FormB2 {
+        foo: Option<Vec<f64>>,
+    }
+
+    assert_eq!(super::from_str("foo="), Ok(FormA { foo: Some("".to_owned()) }));
+    assert_eq!(super::from_str("foo="), Ok(FormB { foo: Some(vec!["".to_owned()]) }));
+    assert_eq!(super::from_str("foo="), Ok(FormA2 { foo: None }));
+    assert_eq!(
+        super::from_str::<FormB2>("foo=").unwrap_err().to_string(),
+        "cannot parse float from empty string"
+    );
 }

@@ -50,11 +50,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     where
         V: de::Visitor<'de>,
     {
-        if self.0.is_empty() {
-            visitor.visit_none()
-        } else {
-            visitor.visit_some(self)
-        }
+        visitor.visit_some(self)
     }
 
     fn deserialize_enum<V>(
