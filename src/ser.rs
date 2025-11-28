@@ -6,7 +6,8 @@ mod pair;
 mod part;
 mod value;
 
-use std::{borrow::Cow, str};
+use alloc::{borrow::Cow, string::String};
+use core::str;
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
 use serde_core::ser;

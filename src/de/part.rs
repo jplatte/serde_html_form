@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use alloc::borrow::Cow;
 
 use serde_core::{
     de::{self, Error as _, IntoDeserializer},

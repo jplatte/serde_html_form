@@ -1,4 +1,5 @@
-use std::str;
+use alloc::string::{String, ToString};
+use core::str;
 
 use serde_core::ser::{self, Serializer as _};
 

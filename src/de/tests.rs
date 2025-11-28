@@ -34,6 +34,7 @@ fn deserialize_borrowed_str() {
 }
 
 #[test]
+#[cfg(feature = "std")]
 fn deserialize_reader() {
     let result = vec![("first".to_owned(), 23), ("last".to_owned(), 42)];
 

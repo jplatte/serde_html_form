@@ -14,7 +14,10 @@ rust-version = "1.56"
 bench = false
 
 [features]
-default = ["ryu"]
+default = ["std", "ryu"]
+
+alloc = []
+std = ["alloc"]
 
 [dependencies]
 # Percent encoding and mapping of query string to pair of key-values

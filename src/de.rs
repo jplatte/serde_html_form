@@ -1,7 +1,5 @@
 //! Deserialization support for the `application/x-www-form-urlencoded` format.
 
-use std::io::Read;
-
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
 use indexmap::map::{self, IndexMap};
 use serde_core::{
@@ -67,10 +65,11 @@ where
 
 /// Convenience function that reads all bytes from `reader` and deserializes
 /// them with `from_bytes`.
+#[cfg(feature = "std")]
 pub fn from_reader<T, R>(mut reader: R) -> Result<T, Error>
 where
     T: de::DeserializeOwned,
-    R: Read,
+    R: std::io::Read,
 {
     let mut buf = vec![];
     reader

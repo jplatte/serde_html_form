@@ -1,4 +1,5 @@
-use std::{hint::unreachable_unchecked, iter, mem, vec};
+use alloc::vec::{self, Vec};
+use core::{hint::unreachable_unchecked, iter, mem};
 
 use serde_core::de::{
     self,

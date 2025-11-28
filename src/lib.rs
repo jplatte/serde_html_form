@@ -14,11 +14,21 @@
     clippy::unseparated_literal_suffix,
     clippy::wildcard_imports
 )]
+#![deny(clippy::std_instead_of_core, clippy::std_instead_of_alloc)]
+#![cfg_attr(not(any(feature = "std", test)), no_std)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 pub mod de;
 pub mod ser;
 
 #[doc(inline)]
-pub use crate::de::{from_bytes, from_reader, from_str, Deserializer};
+pub use crate::de::{from_bytes, from_str, Deserializer};
+
+#[cfg(feature = "std")]
+#[doc(inline)]
+pub use crate::de::from_reader;
+
 #[doc(inline)]
 pub use crate::ser::{push_to_string, to_string, Serializer};

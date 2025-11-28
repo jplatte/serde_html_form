@@ -1,4 +1,5 @@
-use std::str;
+use alloc::string::String;
+use core::str;
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
 use serde_core::ser::{Serialize, SerializeSeq};

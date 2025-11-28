@@ -1,4 +1,5 @@
-use std::{borrow::Cow, ops::Deref};
+use alloc::{borrow::Cow, string::String};
+use core::ops::Deref;
 
 use serde_core::ser::{self, Serialize};
 
