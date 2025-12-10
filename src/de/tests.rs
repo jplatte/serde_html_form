@@ -210,3 +210,21 @@ fn deserialize_unit_enum() {
 fn deserialize_unit_type() {
     assert_eq!(super::from_str(""), Ok(()));
 }
+
+#[derive(Debug, Deserialize, PartialEq)]
+#[serde(tag = "action", rename_all = "lowercase")]
+enum Foo {
+    A(A),
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+struct A {
+    foo: String,
+}
+
+#[test]
+fn deserialize_internally_tagged_enum() {
+    let src = "action=a&foo=hello";
+    let parsed: Foo = super::from_str(src).unwrap();
+    assert_eq!(parsed, Foo::A(A { foo: "hello".to_owned() }));
+}
