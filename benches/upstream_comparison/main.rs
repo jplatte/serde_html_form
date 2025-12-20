@@ -1,3 +1,5 @@
+#![allow(clippy::incompatible_msrv)] // MSRV applies to the lib, not the benchmarks
+
 use serde::Deserialize;
 
 fn main() {
