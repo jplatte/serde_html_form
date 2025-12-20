@@ -1,3 +1,11 @@
+# Unreleased
+
+- Change `deserialize_any` to forward to `deserialize_map` instead of `deserialize_seq`
+  - This was a deviation from `serde_urlencoded`, which is now reverted
+  - This means when deserializing to a catch-all type like `serde_json::Value`, you will now
+    get an `Object` instead of an `Array`
+- Remove `de::from_reader`
+
 # 0.2.8
 
 Switch `serde` dependency to `serde_core`.
