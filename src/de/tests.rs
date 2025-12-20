@@ -34,13 +34,6 @@ fn deserialize_borrowed_str() {
 }
 
 #[test]
-fn deserialize_reader() {
-    let result = vec![("first".to_owned(), 23), ("last".to_owned(), 42)];
-
-    assert_eq!(super::from_reader(b"first=23&last=42" as &[_]), Ok(result));
-}
-
-#[test]
 fn deserialize_option() {
     let result = vec![("first".to_owned(), Some(23)), ("last".to_owned(), Some(42))];
     assert_eq!(super::from_str("first=23&last=42"), Ok(result));
