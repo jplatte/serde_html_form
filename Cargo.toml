@@ -15,13 +15,20 @@ bench = false
 
 [features]
 default = ["ryu", "std"]
+# Use ahash for the internal `IndexMap`s that `serde_html_form` creates
+# to buffer inputs in some cases. None of `ahash`s features are enabled by this
+# crate. Please depend on ahash yourself and choose the appropriate rng feature
+# for your use case such that this crate compiles.
+#
+# This feature has no effect if the `std` feature is also enabled.
+ahash = ["dep:ahash"]
 # Use std's default hasher for the internal `IndexMap`s that `serde_html_form`
 # creates to buffer inputs in some cases.
-#
-# Currently, building without this feature is not supported.
 std = []
 
 [dependencies]
+# Alternative hasher for IndexMap that doesn't require std and is faster
+ahash = { version = "0.8.12", optional = true, default-features = false }
 # Percent encoding and mapping of query string to pair of key-values
 form_urlencoded = { version = "1.0.1", default-features = false, features = ["alloc"] }
 # Used for internal buffering during deserialization
