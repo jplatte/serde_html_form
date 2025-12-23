@@ -31,6 +31,8 @@ serde_core = "1.0.221"
 [dev-dependencies]
 # For the assert_matches! macro
 assert_matches2 = "0.1.0"
+# For snapshot testing
+insta = "1.45.0"
 # Some tests use structs that derive Serialize / Deserialize
 serde = { version = "1.0.221", features = ["derive"] }
 
