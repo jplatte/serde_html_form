@@ -8,9 +8,9 @@ use serde_core::{
 use super::Error;
 
 #[derive(PartialEq, PartialOrd, Eq, Ord, Hash)]
-pub(super) struct Part<'de>(pub Cow<'de, str>);
+pub(super) struct Part<'de, const EMPTY_IS_SOME: bool = false>(pub Cow<'de, str>);
 
-impl<'de> IntoDeserializer<'de> for Part<'de> {
+impl<'de, const EMPTY_IS_SOME: bool> IntoDeserializer<'de> for Part<'de, EMPTY_IS_SOME> {
     type Deserializer = Self;
 
     fn into_deserializer(self) -> Self::Deserializer {
@@ -33,7 +33,7 @@ macro_rules! forward_parsed_value {
     }
 }
 
-impl<'de> de::Deserializer<'de> for Part<'de> {
+impl<'de, const EMPTY_IS_SOME: bool> de::Deserializer<'de> for Part<'de, EMPTY_IS_SOME> {
     type Error = Error;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -50,7 +50,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     where
         V: de::Visitor<'de>,
     {
-        if self.0.is_empty() {
+        if !EMPTY_IS_SOME && self.0.is_empty() {
             visitor.visit_none()
         } else {
             visitor.visit_some(self)
@@ -118,7 +118,7 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
     }
 }
 
-impl<'de> de::EnumAccess<'de> for Part<'de> {
+impl<'de, const EMPTY_IS_SOME: bool> de::EnumAccess<'de> for Part<'de, EMPTY_IS_SOME> {
     type Error = Error;
     type Variant = UnitOnlyVariantAccess;
 
@@ -131,9 +131,9 @@ impl<'de> de::EnumAccess<'de> for Part<'de> {
     }
 }
 
-struct PartSeqAccess<'de>(Option<Part<'de>>);
+struct PartSeqAccess<'de, const EMPTY_IS_SOME: bool>(Option<Part<'de, EMPTY_IS_SOME>>);
 
-impl<'de> de::SeqAccess<'de> for PartSeqAccess<'de> {
+impl<'de, const EMPTY_IS_SOME: bool> de::SeqAccess<'de> for PartSeqAccess<'de, EMPTY_IS_SOME> {
     type Error = Error;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>

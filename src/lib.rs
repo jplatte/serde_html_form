@@ -19,6 +19,6 @@ pub mod de;
 pub mod ser;
 
 #[doc(inline)]
-pub use crate::de::{from_bytes, from_str, Deserializer};
+pub use crate::de::{empty_is_some, from_bytes, from_str, Deserializer};
 #[doc(inline)]
 pub use crate::ser::{push_to_string, to_string, Serializer};

@@ -221,3 +221,111 @@ fn deserialize_internally_tagged_enum() {
     let parsed: Foo = super::from_str(src).unwrap();
     assert_eq!(parsed, Foo::A(A { foo: "hello".to_owned() }));
 }
+
+mod empty_is_some {
+    use super::*;
+
+    #[test]
+    fn option_string_empty_value() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            value: Option<String>,
+        }
+
+        // Default behavior: empty string becomes None
+        assert_eq!(super::super::from_str("value="), Ok(Form { value: None }));
+
+        // With empty_is_some: empty string becomes Some("")
+        assert_eq!(
+            super::super::empty_is_some::from_str("value="),
+            Ok(Form { value: Some("".to_owned()) })
+        );
+    }
+
+    #[test]
+    fn option_string_with_value() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            value: Option<String>,
+        }
+
+        // Both should work the same with non-empty values
+        assert_eq!(
+            super::super::from_str("value=hello"),
+            Ok(Form { value: Some("hello".to_owned()) })
+        );
+        assert_eq!(
+            super::super::empty_is_some::from_str("value=hello"),
+            Ok(Form { value: Some("hello".to_owned()) })
+        );
+    }
+
+    #[test]
+    fn option_string_missing_field() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            value: Option<String>,
+        }
+
+        // Both should treat missing field as None
+        assert_eq!(super::super::from_str(""), Ok(Form { value: None }));
+        assert_eq!(super::super::empty_is_some::from_str(""), Ok(Form { value: None }));
+    }
+
+    #[test]
+    fn option_vec_string_empty_value() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            value: Option<Vec<String>>,
+        }
+
+        // Default behavior: empty string becomes None
+        assert_eq!(super::super::from_str("value="), Ok(Form { value: None }));
+
+        // With empty_is_some: empty string becomes Some(vec![""])
+        assert_eq!(
+            super::super::empty_is_some::from_str("value="),
+            Ok(Form { value: Some(vec!["".to_owned()]) })
+        );
+    }
+
+    #[test]
+    fn option_f64_empty_value() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            value: Option<f64>,
+        }
+
+        // Default behavior: empty string becomes None
+        assert_eq!(super::super::from_str("value="), Ok(Form { value: None }));
+
+        // With empty_is_some: empty string tries to parse as f64 and fails
+        assert_eq!(
+            super::super::empty_is_some::from_str::<Form>("value=").unwrap_err().to_string(),
+            "cannot parse float from empty string"
+        );
+    }
+
+    #[test]
+    fn vec_option_string_empty_values() {
+        #[derive(Deserialize, PartialEq, Debug)]
+        struct Form {
+            #[serde(default)]
+            value: Vec<Option<String>>,
+        }
+
+        // Default behavior: empty strings become None
+        assert_eq!(
+            super::super::from_str("value=&value=hello&value="),
+            Ok(Form { value: vec![None, Some("hello".to_owned()), None] })
+        );
+
+        // With empty_is_some: empty strings become Some("")
+        assert_eq!(
+            super::super::empty_is_some::from_str("value=&value=hello&value="),
+            Ok(Form {
+                value: vec![Some("".to_owned()), Some("hello".to_owned()), Some("".to_owned())]
+            })
+        );
+    }
+}
