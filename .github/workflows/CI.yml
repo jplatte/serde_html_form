@@ -50,10 +50,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@master
         with:
-          # Not the actual MSRV, but 1.56 has issues downloading some of our
-          # dependencies from the old git-based crates.io registry...
-          # Better than not testing with an older version of Rust at all.
-          toolchain: "1.68"
+          # Keep in sync with rust-version in Cargo.toml
+          toolchain: "1.63"
       - uses: Swatinem/rust-cache@v2
       - name: Pin dependencies
         run: |
