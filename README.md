@@ -100,7 +100,8 @@ assert_eq!(
         single: Some(1),
         at_least_one: vec![
             // Empty strings get deserialized as `None` for fields of builtin
-            // numerical types.
+            // numerical types. Use `serde_html_form::empty_as_none` if you want
+            // this behavior for fields of other types.
             None,
             // It's no problem that the `at_least_one` field repetitions are
             // not consecutive (single comes in between).
