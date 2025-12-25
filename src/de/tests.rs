@@ -15,6 +15,19 @@ fn deserialize_newtype_i32() {
 }
 
 #[test]
+fn deserialize_option_newtype_i32() {
+    // This is a limitation of the current empty-as-none hack that exists for
+    // optional numbers (and booleans): It doesn't work for newtypes.
+    //
+    // This should be fine as this is a somewhat niche use case. serde
+    // attributes can be used to work arounds it.
+    assert_compact_debug_snapshot!(
+        super::from_str::<Vec<(String, Option<NewType<i32>>)>>("field="),
+        @r#"Err(Error("cannot parse integer from empty string"))"#
+    );
+}
+
+#[test]
 fn deserialize_bytes() {
     assert_compact_debug_snapshot!(
         super::from_bytes::<Vec<(String, i32)>>(b"first=23&last=42"),
@@ -51,6 +64,14 @@ fn deserialize_empty_string() {
     assert_compact_debug_snapshot!(
         super::from_str::<Vec<(String, &str)>>("first="),
         @r#"Ok([("first", "")])"#
+    );
+}
+
+#[test]
+fn deserialize_optional_string_empty() {
+    assert_compact_debug_snapshot!(
+        super::from_str::<Vec<(&str, Option<&str>)>>("foo=&bar="),
+        @r#"Ok([("foo", Some("")), ("bar", Some(""))])"#
     );
 }
 
@@ -249,5 +270,19 @@ fn deserialize_internally_tagged_enum() {
     assert_compact_debug_snapshot!(
         super::from_str::<Foo>("action=a&foo=hello"),
         @r#"Ok(A(A { foo: "hello" }))"#
+    );
+}
+
+#[test]
+fn deserialize_optional_list_empty_value() {
+    #[allow(dead_code)]
+    #[derive(Debug, Deserialize)]
+    struct Form {
+        foo: Option<Vec<String>>,
+    }
+
+    assert_compact_debug_snapshot!(
+        super::from_str::<Form>("foo="),
+        @r#"Ok(Form { foo: Some([""]) })"#
     );
 }

@@ -1,9 +1,11 @@
-use std::borrow::Cow;
+use std::{any::TypeId, borrow::Cow};
 
 use serde_core::{
     de::{self, Error as _, IntoDeserializer},
     forward_to_deserialize_any,
 };
+
+use crate::de::utils::non_static_type_id;
 
 use super::Error;
 
@@ -51,10 +53,49 @@ impl<'de> de::Deserializer<'de> for Part<'de> {
         V: de::Visitor<'de>,
     {
         if self.0.is_empty() {
-            visitor.visit_none()
-        } else {
-            visitor.visit_some(self)
+            // Types for which to treat an empty `Part` as none in this method.
+            //
+            // FIXME: Change to a `const` once MSRV is raised to 1.91 or later.
+            let empty_is_none_types = [
+                TypeId::of::<Option<bool>>(),
+                // signed integers
+                TypeId::of::<Option<i8>>(),
+                TypeId::of::<Option<i16>>(),
+                TypeId::of::<Option<i32>>(),
+                TypeId::of::<Option<i64>>(),
+                TypeId::of::<Option<i128>>(),
+                TypeId::of::<Option<isize>>(),
+                TypeId::of::<Option<core::num::NonZeroI8>>(),
+                TypeId::of::<Option<core::num::NonZeroI16>>(),
+                TypeId::of::<Option<core::num::NonZeroI32>>(),
+                TypeId::of::<Option<core::num::NonZeroI64>>(),
+                TypeId::of::<Option<core::num::NonZeroI128>>(),
+                TypeId::of::<Option<core::num::NonZeroIsize>>(),
+                // unsigned integers
+                TypeId::of::<Option<u8>>(),
+                TypeId::of::<Option<u16>>(),
+                TypeId::of::<Option<u32>>(),
+                TypeId::of::<Option<u64>>(),
+                TypeId::of::<Option<u128>>(),
+                TypeId::of::<Option<usize>>(),
+                TypeId::of::<Option<core::num::NonZeroU8>>(),
+                TypeId::of::<Option<core::num::NonZeroU16>>(),
+                TypeId::of::<Option<core::num::NonZeroU32>>(),
+                TypeId::of::<Option<core::num::NonZeroU64>>(),
+                TypeId::of::<Option<core::num::NonZeroU128>>(),
+                TypeId::of::<Option<core::num::NonZeroUsize>>(),
+                // floats
+                TypeId::of::<Option<f32>>(),
+                TypeId::of::<Option<f64>>(),
+            ];
+
+            let value_type = non_static_type_id::<V::Value>();
+            if empty_is_none_types.contains(&value_type) {
+                return visitor.visit_none();
+            }
         }
+
+        visitor.visit_some(self)
     }
 
     fn deserialize_enum<V>(

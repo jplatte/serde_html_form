@@ -4,6 +4,11 @@
   - This was a deviation from `serde_urlencoded`, which is now reverted
   - This means when deserializing to a catch-all type like `serde_json::Value`, you will now
     get an `Object` instead of an `Array`
+- Change deserialization of optional values to treat empty values (like in `foo=&bar=`)
+  as `Some(_)` rather than `None`, _except_ for `Option<bool>` and `Option<{number}>` (for
+  specific number types that are either builtin or part of the standard library)
+  - This reverts the main change from v0.1.1 while still allowing simple optional number fields to
+    work
 - Remove `de::from_reader`
 
 # 0.2.8
