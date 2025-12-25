@@ -1,4 +1,4 @@
-# Unreleased
+# 0.3.0
 
 - Change `deserialize_any` to forward to `deserialize_map` instead of `deserialize_seq`
   - This was a deviation from `serde_urlencoded`, which is now reverted
