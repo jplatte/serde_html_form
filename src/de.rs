@@ -167,11 +167,21 @@ impl<'de> Iterator for PartIterator<'de> {
     }
 }
 
-fn group_entries(parse: UrlEncodedParse<'_>) -> IndexMap<Part<'_>, ValOrVec<Part<'_>>> {
+#[cfg(feature = "std")]
+type RandomState = std::hash::RandomState;
+
+#[cfg(not(feature = "std"))]
+type RandomState = compile_error!("the `std` feature is currently required");
+
+fn group_entries(
+    parse: UrlEncodedParse<'_>,
+) -> IndexMap<Part<'_>, ValOrVec<Part<'_>>, RandomState> {
     use map::Entry::*;
 
-    let mut res = IndexMap::new();
+    let mut res = IndexMap::default();
 
+    // silence unhelpful errors when we hit the compile_error! above anyways
+    #[cfg(feature = "std")]
     for (key, value) in parse {
         match res.entry(Part(key)) {
             Vacant(v) => {

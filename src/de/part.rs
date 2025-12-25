@@ -1,4 +1,5 @@
-use std::{any::TypeId, borrow::Cow};
+use alloc::borrow::Cow;
+use core::any::TypeId;
 
 use serde_core::{
     de::{self, Error as _, IntoDeserializer},

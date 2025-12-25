@@ -1,5 +1,5 @@
-use std::{
-    borrow::Cow,
+use alloc::{borrow::Cow, format};
+use core::{
     error, fmt,
     str::{self, Utf8Error},
 };

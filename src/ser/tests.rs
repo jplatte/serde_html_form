@@ -1,3 +1,4 @@
+use alloc::{borrow::ToOwned as _, string::String, vec, vec::Vec};
 use insta::assert_snapshot;
 use serde::Serialize;
 
@@ -184,7 +185,7 @@ fn serialize_list_of_enum() {
 
 #[test]
 fn serialize_map() {
-    let mut s = std::collections::BTreeMap::new();
+    let mut s = alloc::collections::BTreeMap::new();
     s.insert("a", "hello");
     s.insert("b", "world");
     assert_snapshot!(super::to_string(s).unwrap(), @"a=hello&b=world");

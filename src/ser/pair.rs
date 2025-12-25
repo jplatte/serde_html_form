@@ -1,4 +1,5 @@
-use std::{borrow::Cow, mem};
+use alloc::borrow::Cow;
+use core::mem;
 
 use form_urlencoded::{Serializer as UrlEncodedSerializer, Target as UrlEncodedTarget};
 use serde_core::ser;

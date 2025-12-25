@@ -1,4 +1,5 @@
-use std::{hint::unreachable_unchecked, iter, mem, vec};
+use alloc::vec::{self, Vec};
+use core::{hint::unreachable_unchecked, iter, mem};
 
 use serde_core::de::{
     self,
@@ -237,7 +238,10 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Cow;
+    use alloc::{
+        borrow::{Cow, ToOwned as _},
+        vec,
+    };
 
     use assert_matches2::assert_matches;
 

@@ -14,19 +14,24 @@ rust-version = "1.56"
 bench = false
 
 [features]
-default = ["ryu"]
+default = ["ryu", "std"]
+# Use std's default hasher for the internal `IndexMap`s that `serde_html_form`
+# creates to buffer inputs in some cases.
+#
+# Currently, building without this feature is not supported.
+std = []
 
 [dependencies]
 # Percent encoding and mapping of query string to pair of key-values
-form_urlencoded = "1.0.1"
+form_urlencoded = { version = "1.0.1", default-features = false, features = ["alloc"] }
 # Used for internal buffering during deserialization
-indexmap = "2.0.0"
+indexmap = { version = "2.0.0", default-features = false }
 # Fast integer serialization
 itoa = "1.0.1"
 # Fast and better-looking float serialization
 ryu = { version = "1.0.9", optional = true }
 # Contains the Serializer and Deserializer traits
-serde_core = "1.0.221"
+serde_core = { version = "1.0.221", default-features = false, features = ["alloc"] }
 
 [dev-dependencies]
 # For the assert_matches! macro

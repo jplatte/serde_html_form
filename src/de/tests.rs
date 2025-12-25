@@ -1,4 +1,8 @@
-use std::collections::BTreeMap;
+use alloc::{
+    collections::BTreeMap,
+    string::{String, ToString as _},
+    vec::Vec,
+};
 
 use insta::{assert_compact_debug_snapshot, assert_snapshot};
 use serde::Deserialize;

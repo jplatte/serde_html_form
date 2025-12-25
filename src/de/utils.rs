@@ -1,4 +1,4 @@
-use std::{any::TypeId, marker::PhantomData, mem};
+use core::{any::TypeId, marker::PhantomData, mem};
 
 /// Produces type IDs that are compatible with `TypeId::of::<T>`, but without
 /// `T: 'static` bound.
