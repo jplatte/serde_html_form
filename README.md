@@ -2,19 +2,19 @@
 
 (De-)serialization support for the `application/x-www-form-urlencoded` format.
 
-This crate is a Rust library for serialising to and deserialising from
+This crate is a Rust library for serializing to and deserializing from
 the [`application/x-www-form-urlencoded`][urlencoded] format. It is built
-upon [Serde], a high performance generic serialization framework and [rust-url],
-a URL parser for Rust.
+upon [`serde`], a high performance generic serialization framework and
+[`form_urlencoded`], a urlencoded parser for Rust (part of Servo).
 
 It is a fork of [`serde_urlencoded`], with additional support for maps or
 structs with fields of sequence type (e.g. `Vec<String>`). It also supports
 `Option`al numerical values, treating `foo=` as `foo: None`.
 
-[rust-url]: https://github.com/servo/rust-url
-[Serde]: https://github.com/serde-rs/serde
+[`form_urlencoded`]: https://crates.io/crates/form_urlencoded
+[`serde`]: https://crates.io/crates/serde
 [urlencoded]: https://url.spec.whatwg.org/#application/x-www-form-urlencoded
-[`serde_urlencoded`]: https://github.com/nox/serde_urlencoded
+[`serde_urlencoded`]: https://crates.io/crates/serde_urlencoded
 
 ## Examples
 
