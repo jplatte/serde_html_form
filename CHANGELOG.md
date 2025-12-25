@@ -1,3 +1,7 @@
+# 0.3.1
+
+Small documentation fix in `README.md`.
+
 # 0.3.0
 
 - Change `deserialize_any` to forward to `deserialize_map` instead of `deserialize_seq`
