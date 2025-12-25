@@ -99,7 +99,8 @@ assert_eq!(
     Ok(Form {
         single: Some(1),
         at_least_one: vec![
-            // Empty strings get deserialized as `None`.
+            // Empty strings get deserialized as `None` for fields of builtin
+            // numerical types.
             None,
             // It's no problem that the `at_least_one` field repetitions are
             // not consecutive (single comes in between).
