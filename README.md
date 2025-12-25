@@ -9,7 +9,7 @@ a URL parser for Rust.
 
 It is a fork of [`serde_urlencoded`], with additional support for maps or
 structs with fields of sequence type (e.g. `Vec<String>`). It also supports
-`Option` in values, treating `foo=` as `foo: None`.
+`Option`al numerical values, treating `foo=` as `foo: None`.
 
 [rust-url]: https://github.com/servo/rust-url
 [Serde]: https://github.com/serde-rs/serde
