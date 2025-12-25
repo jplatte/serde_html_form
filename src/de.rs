@@ -170,8 +170,11 @@ impl<'de> Iterator for PartIterator<'de> {
 #[cfg(feature = "std")]
 type RandomState = std::hash::RandomState;
 
-#[cfg(not(feature = "std"))]
-type RandomState = compile_error!("the `std` feature is currently required");
+#[cfg(all(feature = "ahash", not(feature = "std")))]
+type RandomState = ahash::RandomState;
+
+#[cfg(not(any(feature = "std", feature = "ahash")))]
+type RandomState = compile_error!("one of the features `std`, `ahash` must be enabled");
 
 fn group_entries(
     parse: UrlEncodedParse<'_>,
@@ -181,7 +184,7 @@ fn group_entries(
     let mut res = IndexMap::default();
 
     // silence unhelpful errors when we hit the compile_error! above anyways
-    #[cfg(feature = "std")]
+    #[cfg(any(feature = "std", feature = "ahash"))]
     for (key, value) in parse {
         match res.entry(Part(key)) {
             Vacant(v) => {
