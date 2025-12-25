@@ -1,5 +1,5 @@
 use alloc::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     string::{String, ToString as _},
     vec::Vec,
 };
@@ -28,6 +28,21 @@ fn deserialize_option_newtype_i32() {
     assert_compact_debug_snapshot!(
         super::from_str::<Vec<(String, Option<NewType<i32>>)>>("field="),
         @r#"Err(Error("cannot parse integer from empty string"))"#
+    );
+}
+
+#[test]
+fn deserialize_option_newtype_i32_with_helper() {
+    #[allow(dead_code)]
+    #[derive(Debug, Deserialize)]
+    struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none")]
+        field: Option<NewType<i32>>,
+    }
+
+    assert_compact_debug_snapshot!(
+        super::from_str::<Form>("field="),
+        @"Ok(Form { field: None })"
     );
 }
 
@@ -288,5 +303,35 @@ fn deserialize_optional_list_empty_value() {
     assert_compact_debug_snapshot!(
         super::from_str::<Form>("foo="),
         @r#"Ok(Form { foo: Some([""]) })"#
+    );
+}
+
+#[test]
+fn deserialize_empty_vec_as_none() {
+    #[allow(dead_code)]
+    #[derive(Debug, Deserialize)]
+    struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none::seq")]
+        vec: Vec<Option<String>>,
+    }
+
+    assert_compact_debug_snapshot!(
+        super::from_str::<Form>("vec=x&vec="),
+        @r#"Ok(Form { vec: [Some("x"), None] })"#
+    );
+}
+
+#[test]
+fn deserialize_empty_btreeset_as_none() {
+    #[allow(dead_code)]
+    #[derive(Debug, Deserialize)]
+    struct Form {
+        #[serde(deserialize_with = "crate::de::empty_as_none::seq")]
+        set: BTreeSet<Option<String>>,
+    }
+
+    assert_compact_debug_snapshot!(
+        super::from_str::<Form>("set=x&set="),
+        @r#"Ok(Form { set: {None, Some("x")} })"#
     );
 }

@@ -1,6 +1,7 @@
 #![doc = include_str!("../README.md")]
 #![no_std]
 #![warn(
+    missing_docs,
     rust_2018_idioms,
     unused_qualifications,
     clippy::alloc_instead_of_core,

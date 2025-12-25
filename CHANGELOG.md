@@ -9,6 +9,10 @@
   specific number types that are either builtin or part of the standard library)
   - This reverts the main change from v0.1.1 while still allowing simple optional number fields to
     work
+  - To get the old behavior for specific fields, use `#[serde(deserialize_with)]` with the new
+    deserialization helper functions (see next changelog entry)
+- Add `serde_html_form::de::empty_as_none` and `serde_html_form::de::empty_as_none::seq`
+  - These allow treating empty values for a scalar field or sequence (list / set) field as `None`
 - Remove `de::from_reader`
 
 # 0.2.8

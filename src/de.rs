@@ -3,18 +3,19 @@
 use form_urlencoded::{parse, Parse as UrlEncodedParse};
 use indexmap::map::{self, IndexMap};
 use serde_core::{
-    de::{self, value::MapDeserializer},
+    de::{self, value::MapDeserializer, Deserialize},
     forward_to_deserialize_any,
 };
 
 #[doc(inline)]
 pub use serde_core::de::value::Error;
 
+pub mod empty_as_none;
 mod part;
 mod utils;
 mod val_or_vec;
 
-use self::{part::Part, val_or_vec::ValOrVec};
+use self::{empty_as_none::EmptyAsNone, part::Part, val_or_vec::ValOrVec};
 
 /// Deserializes a `application/x-www-form-urlencoded` value from a `&[u8]`.
 ///
@@ -35,7 +36,7 @@ use self::{part::Part, val_or_vec::ValOrVec};
 /// ```
 pub fn from_bytes<'de, T>(input: &'de [u8]) -> Result<T, Error>
 where
-    T: de::Deserialize<'de>,
+    T: Deserialize<'de>,
 {
     T::deserialize(Deserializer::from_bytes(input))
 }
@@ -59,7 +60,7 @@ where
 /// ```
 pub fn from_str<'de, T>(input: &'de str) -> Result<T, Error>
 where
-    T: de::Deserialize<'de>,
+    T: Deserialize<'de>,
 {
     from_bytes(input.as_bytes())
 }
@@ -155,6 +156,32 @@ impl<'de> de::Deserializer<'de> for Deserializer<'de> {
         enum
         ignored_any
     }
+}
+
+/// Deserialization helper that treats empty values as `None`.
+///
+/// Use with `#[serde(deserialize_with)]`. Do not use with deserializers from
+/// other crates, as it may appear to work at first but result in strange
+/// behavior later.
+///
+/// # Example
+///
+/// ```
+/// # use serde::Deserialize;
+/// #[derive(Debug, PartialEq, Deserialize)]
+/// struct Form {
+///     #[serde(deserialize_with = "serde_html_form::de::empty_as_none")]
+///     value: Option<String>,
+/// }
+///
+/// assert_eq!(serde_html_form::from_str("value="), Ok(Form { value: None }));
+/// ```
+pub fn empty_as_none<'de, T, D>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    T: Deserialize<'de>,
+    D: de::Deserializer<'de>,
+{
+    EmptyAsNone::deserialize(deserializer).map(|EmptyAsNone(option)| option)
 }
 
 struct PartIterator<'de>(UrlEncodedParse<'de>);
