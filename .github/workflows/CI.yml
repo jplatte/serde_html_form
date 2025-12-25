@@ -43,7 +43,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo test
 
-  test-ahash:
+  test-min-features:
     name: Build with minimal features
     runs-on: ubuntu-latest
     steps:
