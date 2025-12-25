@@ -117,5 +117,4 @@ assert!(
 
 ## License
 
-This crate is licensed under the MIT license ([LICENSE](LICENSE) or
-<https://opensource.org/license/mit/>).
+This crate is licensed under the [MIT license](https://opensource.org/license/mit/).
