@@ -195,7 +195,7 @@ impl<'de> Iterator for PartIterator<'de> {
 }
 
 #[cfg(feature = "std")]
-type RandomState = std::hash::RandomState;
+type RandomState = std::collections::hash_map::RandomState;
 
 #[cfg(not(feature = "std"))]
 type RandomState = compile_error!("the `std` feature is currently required");

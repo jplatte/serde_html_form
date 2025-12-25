@@ -43,6 +43,28 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo test
 
+  build-msrv:
+    name: Build with MSRV
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          # Not the actual MSRV, but 1.56 has issues downloading some of our
+          # dependencies from the old git-based crates.io registry...
+          # Better than not testing with an older version of Rust at all.
+          toolchain: "1.68"
+      - uses: Swatinem/rust-cache@v2
+      - name: Pin dependencies
+        run: |
+          cargo update -p itoa --precise 1.0.15
+          cargo update -p ryu --precise 1.0.20
+          cargo update -p indexmap --precise 2.11.4
+          cargo update -p hashbrown --precise 0.15.0
+      - run: cargo build
+        env:
+          CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+
   test-min-features:
     name: Build with minimal features
     runs-on: ubuntu-latest
