@@ -1,3 +1,10 @@
+# 0.3.2
+
+Update minimum supported Rust version to 1.63.
+
+Previously, it was declared as 1.56 but not tested, and was actually 1.81 as of
+version 0.3.0.
+
 # 0.3.1
 
 Small documentation fix in `README.md`.
